@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+from subprocess import call
+
 def find_center(img):
     
     #finding the contors
@@ -24,6 +26,11 @@ def find_center(img):
     return avgx, avgy
     
 def main():
+    
+    #create the file to be outputted
+    call(['touch', 'high_goal_area.txt'])
+    file = open('high_goal_area.txt', 'rw+')
+    
     cap = cv2.VideoCapture(0)
     while(cap.isOpened()):
         
@@ -74,6 +81,11 @@ def main():
             if len(temp)==0:
                 temp = 'centered'
             print temp
+            
+            #Write the output to a file
+            call(['rm', 'high_goal_area.txt'])
+            call(['touch', 'high_goal_area.txt'])
+            file.write(temp)
             
             #cv2.imshow('frame',frame)
             
