@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 def find_center(img):
     
     #finding the contors
@@ -30,9 +31,10 @@ def main():
         
         #getting the current frame so it can be maipulated
         a, frame = cap.read()
-        x_center = frame.size().width/2
-        y_center = frame.size().height/2
-        
+        x_center, y_center = frame.shape[:2]
+        x_center/=2
+        y_center/=2
+        #print x_center
         # Convert BGR to HSV
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         
@@ -43,9 +45,6 @@ def main():
         # Threshold the HSV image to get only green colors
         range = 20
         mask = cv2.inRange(hsv, np.array([65-range,50,50]), np.array([65+range,255,255]))
-        
-        #Showing the mask for testing
-        cv2.imshow('1', mask)
         
         #Save and re-read the frame to it can be loaded in grey scale
         cv2.imwrite("current_frame.png", mask)
@@ -62,6 +61,7 @@ def main():
             
             range = 20
             
+            #Form the string to be outputted from where the target is
             temp = ''
             if avgy > range+y_center:
                 temp+='high, '
@@ -78,6 +78,6 @@ def main():
             #cv2.imshow('frame',frame)
             
         except:
-            print "no Rectangles found"
+            print "target not found"
             
 main()
