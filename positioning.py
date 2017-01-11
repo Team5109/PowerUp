@@ -1,5 +1,6 @@
 import sys
 #Need to update this based on the pi
+#http://github.com/mwilliams03/BerryIMU.git <- need to clone this to get the import
 sys.path.insert(0, '/home/daniel/pythonstuff/Steamworks/BerryIMU/python-BerryIMU-gryo-accel-compass')
 from berryIMU import *
 from Decimal import *
