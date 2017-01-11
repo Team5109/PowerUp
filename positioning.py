@@ -1,4 +1,7 @@
-import numpy as np
+import sys
+#Need to update this based on the pi
+sys.path.insert(0, '/home/daniel/pythonstuff/Steamworks/BerryIMU/python-BerryIMU-gryo-accel-compass')
+from berryIMU import *
 from Decimal import *
 import math
 
@@ -7,6 +10,8 @@ getcontext().prec = 10
 refresh_rate = decimal('1') #in kHz
 time_between = decima1('1')/(refresh_rate*decimal('1000'))
 half_time_squared = (time_between**decima1('2'))*decimal('.5')
+
+file = ''
 
 #from buttons/switch on pi
 #TODO
@@ -20,13 +25,13 @@ x_pos, y_pos = getStartingPostion()
 #Method to return the angle of the gyro
 #TODO
 def getTheta():
-    return 1
+    return readGYRz()
     
 #Method to return the acceleration form the accelerometer 
 #TODO
 def getAccelerations():
-    x_accel_tmp = 1
-    y_accel_tmp = 1
+    x_accel_tmp = readACCx()
+    y_accel_tmp = readACCy()
     theta = getTheta
     x_accel = math.sin(theta)*y_accel_tmp+math.cos(theta)*x_accel_tmp
     y_accel = math.sin(theta)*x_accel_tmp+math.cos(theta)*y_accel_tmp
@@ -43,6 +48,22 @@ def calulatePosition():
     x_pos+=x_offset
     y_pos+=y_offset
     
+def setUp():
+    global file
+    file = '/dev/i2c-%d'
+    file = open(filename, O_RDWR)
+    if file < 0:
+        print('Unable to open I2C bus! tyring again')
+        return False
+    else:
+        return true
+
+def main():
+    while setUp()==False:
+        pass
+    while(True):
+        calculatePosition
+        
     
 
     
