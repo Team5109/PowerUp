@@ -24,12 +24,10 @@ def getStartingPostion():
 x_pos, y_pos = getStartingPostion()
 
 #Method to return the angle of the gyro
-#TODO
 def getTheta():
     return readGYRz()
     
 #Method to return the acceleration form the accelerometer 
-#TODO
 def getAccelerations():
     x_accel_tmp = readACCx()
     y_accel_tmp = readACCy()
