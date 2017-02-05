@@ -37,38 +37,42 @@ while(cap.isOpened()):
     
     # Convert BGR to HSV
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    
+    hsv = np.asarray(hsv,  np.uint8)
     #adding some blurs to decrease noise and increase accuracy
-    hsv = cv2.GaussianBlur(hsv,(5,5),0)
-    hsv = cv2.bilateralFilter(hsv,9,75,75)
+#    for i in range(2):
+#   	 hsv = cv2.GaussianBlur(hsv,(5,5),0)
+   
+
+    cv2.imshow('w',hsv)
     
-    # Threshold the HSV image to get only green colors
-    range = 20
-    mask = cv2.inRange(hsv, np.array([65-range,50,50]), np.array([65+range,255,255]))
+    # Threshold the HSV image to get only white colors
+    #range = 20
+    #mask = cv2.inRange(hsv, np.array([65-range,50,50]), np.array([65+range,255,255]))
+    mask = cv2.inRange(hsv, np.array([0,0,0]), np.array([0,0,255])
     
     #Showing the mask for testing
     cv2.imshow('1', mask)
     
-    #Save and re-read the frame to it can be loaded in grey scale
-    cv2.imwrite("current_frame.png", mask)
-    gray = cv2.imread("current_frame.png", 0)
+    #got from hsv -> bgr ->gray
+    gray = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+    gray = cv2.cvtColor(gray, cv2.COLOR_BGR2GRAY)
     
     #Tring to find the center
     #if no rectangele, then the program doesn't crash
     try:
-        avgx, avgy = find_center(gray)
-        print avgx
+      	avgx, avgy = find_center(gray)
+      	print avgx
         
         #put a circle on the frame
-        cv2.circles(frame, (avgx, avgy), 4, (0, 0, 2555), 2)
+        #cv2.circles(frame, (avgx, avgy), 4, (0, 0, 2555), 2)
         print "rectangele found"
-        cv2.imshow('frame',frame)
+        #cv2.imshow('frame',frame)
         
     except:
         
         #print "no Rectangles found"
         pass
-        
+    cv2.imshow('s', frame)
     #Wait for the q to be presses      
     k = cv2.waitKey(5) & 0xFF
     if k == ord('q'):
