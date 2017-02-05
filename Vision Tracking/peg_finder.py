@@ -48,7 +48,7 @@ while(cap.isOpened()):
     # Threshold the HSV image to get only white colors
     #range = 20
     #mask = cv2.inRange(hsv, np.array([65-range,50,50]), np.array([65+range,255,255]))
-    mask = cv2.inRange(hsv, np.array([0,0,0]), np.array([0,0,255])
+    mask = cv2.inRange(hsv, np.array([0,0,0]), np.array([0,0,255]))
     
     #Showing the mask for testing
     cv2.imshow('1', mask)
