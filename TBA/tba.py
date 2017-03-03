@@ -11,7 +11,7 @@ team_key= Config.get('team','key')
 event_id = Config.get('event','id')
 
 usage_string="Displaying game info during competition in the pit"
-version_number="v0.6"
+version_number="v0.7"
 parser = tbapi.TBAParser(5109, usage_string, version_number)
 
 blue = '%{color:blue}Blue%' 
@@ -35,8 +35,14 @@ def sec_to_HMS(sec):
     #Set the max number of seconds to 60
     seconds= sec%60
 
+    if len(str(seconds))==1:
+	minutes="0"+str(seconds)
+
     #convert to minutes and set the max number of minutes to 60
     minutes = (sec/60)%60
+
+    if len(str(minutes))==1:
+	minutes="0"+str(minutes)
     
     #convert to hours and set the max number of minutes to 60
     hours = (sec/3600)%60
@@ -45,15 +51,17 @@ def sec_to_HMS(sec):
     return "{}:{}:{}".format(hours,minutes,seconds)
 
 def main():
-    thtml = "<notextile><head><script type=\"text/javascript\" src=\"scripts.js\"></script>\n<link rel=\"stylesheet\" type\"text/css\" href=\"main.css\"></head></notextile>\n\nTeam {}, {}, from {} est {}\nCompetition: {}".format(team.team_number, team.nickname, team.location, team.rookie_year,event.name)
+    thtml = u"<notextile><head><script type=\"text/javascript\" src=\"scripts.js\"></script>\n<link rel=\"stylesheet\" type\"text/css\" href=\"main.css\"></head></notextile>\n\nTeam {}, {}, from {} est {}\nCompetition: {}".format(team.team_number, team.nickname, team.location, team.rookie_year,event.name)
     thtml+= "<notextile><img src=\"logo.png\" height=\"63\" width=\"174\"></notextile>"
-   
-    event_ranking = parser.get_event_rankings(event_id)
-
-    team_ranking_info = (event_ranking.get_rank_by_team(team.team_number))
-    rank = team_ranking_info.raw[0]
-    record = team_ranking_info.raw[7]
-    rp = team_ranking_info.raw[2]
+    try:
+    	event_ranking = parser.get_event_rankings(event_id)
+	team_ranking_info = (event_ranking.get_rank_by_team(team.team_number))
+    	rank = team_ranking_info.raw[0]
+    	record = team_ranking_info.raw[7]
+   	rp = team_ranking_info.raw[2]
+    except:
+	print "No ranking yet"
+    	record=rank=rp="N/A"
     thtml+="\nRecord: {} Rank: {} Ranking Points: {}\n<hr>\n".format(record, rank, rp)
     matches = parser.get_team_event_matches(team.key, event_id)
 
@@ -78,29 +86,36 @@ def main():
     f_qf=False
     f_sf=False
     f_f=False
-    
+    not_played=False
     temp = reorganize(matches)
     for i in temp:
 	    outcome = i.alliances
-	    if time.time()<float(i.time):
+	    if time.time()<float(i.time) and not not_played:
 		    thtml+= "The next match ({}) will occur in {} at {}\n".format(i.match_number, sec_to_HMS(i.time-time.time()), time.strftime("%H:%M %B %d %Y", time.localtime(i.time)))
+		    not_played=True
 	    
-            aliance = '%{color:blue}Blue%'
+            aliance = blue
             for k in range(3):
                    if outcome['red']['teams'][k] == team.key:
-                             aliance='%{color:red}Red%'
+                             aliance=red
+
+	    if not_played:
+			thtml+="Team {} will play will play with the {} alliance in match {}\n\n".format(team.team_number,aliance,i.match_number)
+         		continue
             if i.comp_level == 'qm':
 	 	    if not f_qm:
                     	thtml+="""<notextile><hr>
 				<h2>Qualifing Matches</h2>
 				</notextile>\n"""
                     	f_qm=True
-                    if time.time()<float(i.time):
+                    #if time.time()<float(i.time):
 		    #if 99999999<i.time:
-			if not next_match_done:
+			#if not next_match_done:
 				
-                        	thtml+= "Match number {} will happen at {} (in {}).\nTeam {} aliance: {}\n\n".format(i.match_number, time.strftime("%H:%M %B %d %Y", time.localtime(i.time)), sec_to_HMS(i.time-time.time()), team.team_number, aliance) 
-                    else:                   
+                        	#thtml+= "Match number {} will happen at {} (in {}).\nTeam {} aliance: {}\n\n".format(i.match_number, time.strftime("%H:%M %B %d %Y", time.localtime(i.time)), sec_to_HMS(i.time-time.time()), team.team_number, aliance) 
+		    if False:
+			pass
+		    else:                   
                         statement=""
                         if outcome['blue']['score']>outcome['red']['score']:
                                 if aliance == blue:
