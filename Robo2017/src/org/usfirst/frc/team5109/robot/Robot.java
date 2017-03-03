@@ -110,6 +110,8 @@ public class Robot extends SampleRobot {
     //declaring encoders
     Encoder rightDrivetrain;
     Encoder leftDrivetrain;
+    int leftEncoderConstant = 1;
+    int rightEncoderConstant = -1;
     Encoder elevatorEncoder;
     Encoder shooter; //maybe
     
@@ -142,7 +144,7 @@ public class Robot extends SampleRobot {
     int startingPosition;
     
   
-    boolean testing = true;
+    boolean testing = false;
     
     
   
@@ -176,13 +178,13 @@ public class Robot extends SampleRobot {
         compressor = new Compressor(0);
         
         //Encoders
-        rightDrivetrain = new Encoder(0, 1);
+        rightDrivetrain = new Encoder(2, 3);
         //256 pulses per revolution of encoder, .975214 inches per rotation
         rightDrivetrain.setDistancePerPulse(.00380943);
-        leftDrivetrain = new Encoder(2, 3);
+        leftDrivetrain = new Encoder(0, 1);
         leftDrivetrain.setDistancePerPulse(.00380943);
-        elevatorEncoder = new Encoder(2,0);
-        shooter = new Encoder(3,0);
+        elevatorEncoder = new Encoder(4,5);
+        shooter = new Encoder(6,7);
         
         //Joystick Stuff
         leftStick = new Joystick(0);
@@ -223,24 +225,29 @@ public class Robot extends SampleRobot {
         		break;
         	case 2:
         		autoGear();
+        		break;
         	case 3:
         		autoGear();
         		crossLineFromGear();
+        		break;
         	case 4:
         		autoGear();
         		crossLineFromGear();
         		autoShootFromLine();
+        		break;
         	case 5:
         		autoGear();
         		crossLineFromGear();
         		goToHopper();
         		autoShootFromHopper();
+        		break;
         	case 6:
         		autoGear();
         		crossLineFromGear();
         		goToOpponentBaselineFromBaseline();
+        		break;
         	default: 
-        		goToBaseline();
+        		break;
         }
     }
     
@@ -259,6 +266,7 @@ public class Robot extends SampleRobot {
     	case 3:
     		turnDegrees(0);
     		moveForward(0);
+    		break;
     	}
     }
     
@@ -439,42 +447,54 @@ public class Robot extends SampleRobot {
     	double circumference = 92.676983; 
     	double fraction = degrees/360;
     	double distance = fraction * circumference;
-    	double turnSpeed = .75;
+    	double turnSpeed = .2;
     	rightDrivetrain.reset();
         leftDrivetrain.reset();
         if (degrees > 0) {
-        	while (rightDrivetrain.getDistance() < distance || leftDrivetrain.getDistance() > -distance) {
+        	while (rightDrivetrain.getDistance() * rightEncoderConstant < distance || leftDrivetrain.getDistance() * leftEncoderConstant > -distance) {
+        		DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
         		rightDrive1.set(turnSpeed * rightDriveConstant);
         		rightDrive2.set(turnSpeed * rightDriveConstant);
         		leftDrive1.set(-turnSpeed * leftDriveConstant);
         		leftDrive2.set(-turnSpeed * leftDriveConstant);
         		Timer.delay(.005);
         	}
-        	while (rightDrivetrain.getDistance() < distance) {
+        	while (rightDrivetrain.getDistance() * rightEncoderConstant < distance) {
+        		DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
         		rightDrive1.set(turnSpeed * rightDriveConstant);
         		rightDrive2.set(turnSpeed * rightDriveConstant);
         		Timer.delay(.005);
         	}
-        	while (leftDrivetrain.getDistance() > -distance) {
+        	while (leftDrivetrain.getDistance() * leftEncoderConstant > -distance) {
+        		DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
         		leftDrive1.set(-turnSpeed * leftDriveConstant);
         		leftDrive2.set(-turnSpeed * leftDriveConstant);
         		Timer.delay(.005);
         	}
         }
         else {
-        	while (rightDrivetrain.getDistance() > -distance || leftDrivetrain.getDistance() < distance) {
+        	while (rightDrivetrain.getDistance() * rightEncoderConstant > -distance || leftDrivetrain.getDistance() * leftEncoderConstant < distance) {
+        		DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
         		rightDrive1.set(-turnSpeed * rightDriveConstant);
         		rightDrive2.set(-turnSpeed * rightDriveConstant);
         		leftDrive1.set(turnSpeed * leftDriveConstant);
         		leftDrive2.set(turnSpeed * leftDriveConstant);
         		Timer.delay(.005);
         	}
-        	while (rightDrivetrain.getDistance() > -distance) {
+        	while (rightDrivetrain.getDistance() * rightEncoderConstant > -distance) {
+        		DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
         		rightDrive1.set(-turnSpeed * rightDriveConstant);
         		rightDrive2.set(-turnSpeed * rightDriveConstant);
         		Timer.delay(.005);
         	}
-        	while (leftDrivetrain.getDistance() < distance) {
+        	while (leftDrivetrain.getDistance() * leftEncoderConstant < distance) {
+        		DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
         		leftDrive1.set(turnSpeed * leftDriveConstant);
         		leftDrive2.set(turnSpeed * leftDriveConstant);
         		Timer.delay(.005);
@@ -487,19 +507,19 @@ public class Robot extends SampleRobot {
 		rightDrivetrain.reset();
         leftDrivetrain.reset();
         
-        while (rightDrivetrain.getDistance() < distance || leftDrivetrain.getDistance() < distance) {
+        while (rightDrivetrain.getDistance() * rightEncoderConstant < distance || leftDrivetrain.getDistance() * leftEncoderConstant < distance) {
         	rightDrive1.set(1 * rightDriveConstant);
             rightDrive2.set(1 * rightDriveConstant);
             leftDrive1.set(1 * leftDriveConstant);
             leftDrive2.set(1 * leftDriveConstant);
         	Timer.delay(.005);
         }
-        while (rightDrivetrain.getDistance() < distance) {
+        while (rightDrivetrain.getDistance() * rightEncoderConstant < distance) {
         	rightDrive1.set(1 * rightDriveConstant);
             rightDrive2.set(1 * rightDriveConstant);
         	Timer.delay(.005);
         }
-        while (leftDrivetrain.getDistance() < distance) {
+        while (leftDrivetrain.getDistance() * leftEncoderConstant < distance) {
             leftDrive1.set(1 * leftDriveConstant);
             leftDrive2.set(1 * leftDriveConstant);
         	Timer.delay(.005);
@@ -511,19 +531,19 @@ public class Robot extends SampleRobot {
         leftDrivetrain.reset();
         distance *= -1;
         //since input is a positive distance, it is made negative then encoders count down to it
-        while (rightDrivetrain.getDistance() > distance || leftDrivetrain.getDistance() > distance) {
+        while (rightDrivetrain.getDistance() * rightEncoderConstant > distance || leftDrivetrain.getDistance() * leftEncoderConstant > distance) {
         	rightDrive1.set(-1 * rightDriveConstant);
             rightDrive2.set(-1 * rightDriveConstant);
             leftDrive1.set(-1 * leftDriveConstant);
             leftDrive2.set(-1 * leftDriveConstant);
         	Timer.delay(.005);
         }
-        while (rightDrivetrain.getDistance() > distance) {
+        while (rightDrivetrain.getDistance() * rightEncoderConstant > distance) {
         	rightDrive1.set(-1 * rightDriveConstant);
             rightDrive2.set(-1 * rightDriveConstant);
         	Timer.delay(.005);
         }
-        while (leftDrivetrain.getDistance() > distance) {
+        while (leftDrivetrain.getDistance() * leftEncoderConstant > distance) {
             leftDrive1.set(-1 * leftDriveConstant);
             leftDrive2.set(-1 * leftDriveConstant);
         	Timer.delay(.005);
@@ -570,6 +590,7 @@ public class Robot extends SampleRobot {
     			turret.set(0);
     			Timer.delay(.1);
     		}*/
+    		compressor.stop();
     		if (testing) {
     			if (rightStick.getRawButton(4)) {
     				DriverStation.reportError("Right encoder" + rightDrivetrain.getDistance(), false);
@@ -583,7 +604,13 @@ public class Robot extends SampleRobot {
     			
     		}
     		else {
-    			
+    			if (leftStick.getRawButton(9)) {
+    				DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+    				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
+    				turnDegrees(360);
+    				DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+    				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
+    			}
     		leftDrive1.set(leftDriveConstant * leftStick.getY());
     		leftDrive2.set(leftDriveConstant * leftStick.getY());
     		rightDrive1.set(rightDriveConstant * rightStick.getY());
