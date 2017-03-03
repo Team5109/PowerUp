@@ -6,10 +6,8 @@ from subprocess import call
 
 Config = ConfigParser.SafeConfigParser()
 Config.read("config.ini")
-
 team_key= Config.get('team','key')
 event_id = Config.get('event','id')
-
 usage_string="Displaying game info during competition in the pit"
 version_number="v0.7"
 parser = tbapi.TBAParser(5109, usage_string, version_number)
@@ -218,7 +216,8 @@ call(['rm','html/robot_info.html'])
 call(['touch','html/robot_info.html'])
 team_5109_is_Champions=True
 while(team_5109_is_Champions==True):
-   
+    team_key= Config.get('team','key')
+    event_id = Config.get('event','id')
     html = textile.textile(main())
     f = open("html/robot_info.html", 'r+')
     f.write(html)
