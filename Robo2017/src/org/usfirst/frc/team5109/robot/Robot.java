@@ -92,7 +92,7 @@ public class Robot extends SampleRobot {
     CANTalon elevator;
     final int elevatorConstant = 1;
     //was .41
-    final double elevatorSpeed = .41;
+    final double elevatorSpeed = 1;
     
     //turret
     CANTalon turret;
@@ -111,7 +111,7 @@ public class Robot extends SampleRobot {
     Encoder rightDrivetrain;
     Encoder leftDrivetrain;
     int leftEncoderConstant = 1;
-    int rightEncoderConstant = -1;
+    int rightEncoderConstant = 1;
     Encoder elevatorEncoder;
     Encoder shooter; //maybe
     
@@ -447,11 +447,11 @@ public class Robot extends SampleRobot {
     	double circumference = 92.676983; 
     	double fraction = degrees/360;
     	double distance = fraction * circumference;
-    	double turnSpeed = .2;
+    	double turnSpeed = .75;
     	rightDrivetrain.reset();
         leftDrivetrain.reset();
         if (degrees > 0) {
-        	while (rightDrivetrain.getDistance() * rightEncoderConstant < distance || leftDrivetrain.getDistance() * leftEncoderConstant > -distance) {
+        	while (rightDrivetrain.getDistance() * rightEncoderConstant < distance && leftDrivetrain.getDistance() * leftEncoderConstant > -distance) {
         		DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
 				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
         		rightDrive1.set(turnSpeed * rightDriveConstant);
@@ -476,7 +476,7 @@ public class Robot extends SampleRobot {
         	}
         }
         else {
-        	while (rightDrivetrain.getDistance() * rightEncoderConstant > -distance || leftDrivetrain.getDistance() * leftEncoderConstant < distance) {
+        	while (rightDrivetrain.getDistance() * rightEncoderConstant > -distance && leftDrivetrain.getDistance() * leftEncoderConstant < distance) {
         		DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
 				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
         		rightDrive1.set(-turnSpeed * rightDriveConstant);
@@ -506,22 +506,22 @@ public class Robot extends SampleRobot {
     public void moveForward(double distance) {
 		rightDrivetrain.reset();
         leftDrivetrain.reset();
-        
-        while (rightDrivetrain.getDistance() * rightEncoderConstant < distance || leftDrivetrain.getDistance() * leftEncoderConstant < distance) {
-        	rightDrive1.set(1 * rightDriveConstant);
-            rightDrive2.set(1 * rightDriveConstant);
-            leftDrive1.set(1 * leftDriveConstant);
-            leftDrive2.set(1 * leftDriveConstant);
+        double moveSpeed = -.75;
+        while (rightDrivetrain.getDistance() * rightEncoderConstant < distance && leftDrivetrain.getDistance() * leftEncoderConstant < distance) {
+        	rightDrive1.set(moveSpeed * rightDriveConstant);
+            rightDrive2.set(moveSpeed * rightDriveConstant);
+            leftDrive1.set(moveSpeed * leftDriveConstant);
+            leftDrive2.set(moveSpeed * leftDriveConstant);
         	Timer.delay(.005);
         }
         while (rightDrivetrain.getDistance() * rightEncoderConstant < distance) {
-        	rightDrive1.set(1 * rightDriveConstant);
-            rightDrive2.set(1 * rightDriveConstant);
+        	rightDrive1.set(moveSpeed * rightDriveConstant);
+            rightDrive2.set(moveSpeed * rightDriveConstant);
         	Timer.delay(.005);
         }
         while (leftDrivetrain.getDistance() * leftEncoderConstant < distance) {
-            leftDrive1.set(1 * leftDriveConstant);
-            leftDrive2.set(1 * leftDriveConstant);
+            leftDrive1.set(moveSpeed * leftDriveConstant);
+            leftDrive2.set(moveSpeed * leftDriveConstant);
         	Timer.delay(.005);
         }
     }
@@ -530,22 +530,24 @@ public class Robot extends SampleRobot {
 		rightDrivetrain.reset();
         leftDrivetrain.reset();
         distance *= -1;
+        double moveSpeed = .75;
+        
         //since input is a positive distance, it is made negative then encoders count down to it
         while (rightDrivetrain.getDistance() * rightEncoderConstant > distance || leftDrivetrain.getDistance() * leftEncoderConstant > distance) {
-        	rightDrive1.set(-1 * rightDriveConstant);
-            rightDrive2.set(-1 * rightDriveConstant);
-            leftDrive1.set(-1 * leftDriveConstant);
-            leftDrive2.set(-1 * leftDriveConstant);
+        	rightDrive1.set(moveSpeed * rightDriveConstant);
+            rightDrive2.set(moveSpeed * rightDriveConstant);
+            leftDrive1.set(moveSpeed * leftDriveConstant);
+            leftDrive2.set(moveSpeed * leftDriveConstant);
         	Timer.delay(.005);
         }
         while (rightDrivetrain.getDistance() * rightEncoderConstant > distance) {
-        	rightDrive1.set(-1 * rightDriveConstant);
-            rightDrive2.set(-1 * rightDriveConstant);
+        	rightDrive1.set(moveSpeed * rightDriveConstant);
+            rightDrive2.set(moveSpeed * rightDriveConstant);
         	Timer.delay(.005);
         }
         while (leftDrivetrain.getDistance() * leftEncoderConstant > distance) {
-            leftDrive1.set(-1 * leftDriveConstant);
-            leftDrive2.set(-1 * leftDriveConstant);
+            leftDrive1.set(moveSpeed * leftDriveConstant);
+            leftDrive2.set(moveSpeed * leftDriveConstant);
         	Timer.delay(.005);
         }
     }
@@ -590,11 +592,27 @@ public class Robot extends SampleRobot {
     			turret.set(0);
     			Timer.delay(.1);
     		}*/
-    		compressor.stop();
+    		//compressor.stop();
     		if (testing) {
     			if (rightStick.getRawButton(4)) {
     				DriverStation.reportError("Right encoder" + rightDrivetrain.getDistance(), false);
     				DriverStation.reportError("Left Encoder" + leftDrivetrain.getDistance(), false);
+    			}
+    			if (leftStick.getRawButton(9)) {
+    				DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+    				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
+    				turnDegrees(360);
+    				DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+    				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
+    			}
+    			if (leftStick.getRawButton(10)){
+    				DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+    				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
+    				moveForward(36);
+    				DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+    				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
+    				
+    				
     			}
     			rightDrive1.set(rightDriveConstant * rightStick.getY());
     			rightDrive2.set(rightDriveConstant * rightStick.getY());
@@ -611,69 +629,101 @@ public class Robot extends SampleRobot {
     				DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
     				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
     			}
-    		leftDrive1.set(leftDriveConstant * leftStick.getY());
-    		leftDrive2.set(leftDriveConstant * leftStick.getY());
-    		rightDrive1.set(rightDriveConstant * rightStick.getY());
-    		rightDrive2.set(rightDriveConstant * rightStick.getY());
-    		//right trigger shoots the ball
-    		if (rightStick.getRawButton(5)) {
-    			shooterSpeed += .01;
-    			Timer.delay(.1);
-    		}
-    		if (rightStick.getRawButton(6)) {
-    			shooterSpeed -= .01;
-    			Timer.delay(.1);
-    		}
-    		DriverStation.reportError("Shooter speed: " + shooterSpeed, false);
-    		if (rightStick.getTrigger()) {
-    			shooter1.set(shooter1Constant * shooterSpeed);
-    			shooter2.set(shooter2Constant * shooterSpeed);
-    			elevator.set(elevatorConstant * -1 * elevatorSpeed);
-    			intake.set(intakeConstant * intakeSpeed);
-    		}
-    		else {
-    			shooter1.set(0);
-    			shooter2.set(0);
-    			elevator.set(0);
-    		}
-    		//left trigger punches out the gear
-    		if (leftStick.getTrigger()) {
-    			pushGear();
-    		}
-    		//left stick button 3 does gear flap
-    		if (leftStick.getRawButton(3)) {
-    			flap.set(false);
-    		}
-    		else {
-    			flap.set(true);
-    		}
-    		//right stick button three toggles intake
-    		if (rightStick.getRawButton(3)) {
-    			if (intakeBool) {
-    				intakeBool = false;
+    			if (leftStick.getRawButton(10)){
+    				DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+    				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
+    				moveForward(36);
+    				DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
+    				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
+    				
+    				
     			}
-    			else {
-    				intakeBool = true;
-    			}
-    			Timer.delay(.2);
-    		}
-    		//intake
-    		if (intakeBool) {
-    			intake.set(intakeSpeed * intakeConstant);
-    		}
-    		else {
-    			intake.set(0);
-    		}
-    		//right stick button four starts scaling
-    		if (rightStick.getRawButton(4)) {
-    			
-    			//scale1.set(.5 * scale1Constant);
-    			scale2.set(.5 *scale2Constant);
-    		}
-    		else {
-    			scale1.set(0);
-    			scale2.set(0);
-    		}
+	    		leftDrive1.set(leftDriveConstant * leftStick.getY());
+	    		leftDrive2.set(leftDriveConstant * leftStick.getY());
+	    		rightDrive1.set(rightDriveConstant * rightStick.getY());
+	    		rightDrive2.set(rightDriveConstant * rightStick.getY());
+	    		
+	    		if (rightStick.getRawButton(2)) {
+	    			if (lowGear) {
+	    				leftShift.set(true);
+	    				rightShift.set(true);
+	    				lowGear = false;
+	    			}
+	    			else {
+	    				leftShift.set(false);
+	    				rightShift.set(false);
+	    				lowGear = true;
+	    			}
+	    		}
+	    		
+	    		if (rightStick.getRawButton(5)) {
+	    			shooterSpeed += .01;
+	    			Timer.delay(.1);
+	    		}
+	    		if (rightStick.getRawButton(6)) {
+	    			shooterSpeed -= .01;
+	    			Timer.delay(.1);
+	    		}
+	    		
+	    		//right trigger shoots the ball
+	    		if (rightStick.getTrigger()) {
+	    			shooter1.set(shooter1Constant * shooterSpeed);
+	    			shooter2.set(shooter2Constant * shooterSpeed);
+	    			elevator.set(elevatorConstant * -1 * elevatorSpeed);
+	    			intake.set(intakeConstant * intakeSpeed);
+	    		}
+	    		else {
+	    			shooter1.set(0);
+	    			shooter2.set(0);
+	    			elevator.set(0);
+	    		}
+	    		
+	    		//left trigger punches out the gear
+	    		if (leftStick.getTrigger()) {
+	    			pushGear();
+	    		}
+	    		
+	    		//left stick button 3 does gear flap
+	    		if (leftStick.getRawButton(3)) {
+	    			flap.set(false);
+	    		}
+	    		else {
+	    			flap.set(true);
+	    		}
+	    		
+	    		//right stick button 3 toggles intake
+	    		if (rightStick.getRawButton(3)) {
+	    			if (intakeBool) {
+	    				intakeBool = false;
+	    			}
+	    			else {
+	    				intakeBool = true;
+	    			}
+	    			Timer.delay(.2);
+	    		}
+	    		
+	    		//intake
+	    		if (intakeBool ) {
+	    			if (!rightStick.getTrigger()) {
+	    				intake.set(intakeSpeed * intakeConstant);
+	    			}
+	    		}
+	    		else {
+	    			if (!rightStick.getTrigger()) {
+	    				intake.set(0);
+	    			}
+	    		}
+	    		
+	    		//right stick button 4 starts scaling
+	    		if (rightStick.getRawButton(4)) {
+	    			
+	    			//scale1.set(.5 * scale1Constant);
+	    			scale2.set(.5 *scale2Constant);
+	    		}
+	    		else {
+	    			scale1.set(0);
+	    			scale2.set(0);
+	    		}
     		}
     		
     		
