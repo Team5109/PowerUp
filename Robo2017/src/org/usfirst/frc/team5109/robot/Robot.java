@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.io.FileReader;
 import java.util.Scanner;
+import java.net.DatagramSocket;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -439,15 +440,21 @@ public class Robot extends SampleRobot {
    }
    
    public String getVisionData(){ // 2017GRITS new command, reads file with vision data
+	   
+	   
+	   
+	   
 		String line = "";
 		try{
-		BufferedReader in = new BufferedReader(new FileReader("C:\\Users\\programmers\\Desktop\\Steamworks\\Vision Tracking\\data.txt"));
+		/*BufferedReader in = new BufferedReader(new FileReader("C:\\Users\\programmers\\Desktop\\Steamworks\\Vision Tracking\\data.txt"));
 		line = in.readLine();
-		in.close();
+		in.close();*/
+			DatagramSocket s = new DatagramSocket(5109);
 		}
 		catch(IOException ex){
-	        System.out.println (ex.toString());
-	        System.out.println("Could not find file data.txt");
+			System.out.println("");
+	        /*System.out.println (ex.toString());
+	        System.out.println("Could not find file data.txt");*/
 	    }
 		
 		return line;
