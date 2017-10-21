@@ -26,5 +26,13 @@
   <property file="${user.home}/wpilib/java/${version}/ant/build.properties"/>
 
   <import file="${wpilib.ant.dir}/build.xml"/>
+	
+	<mkdir dir="${basedir}/lib"/>
+	<copy todir="${build.lib}" failonerror="false" verbose="false">
+		<fileset dir="${basedir}/lib">
+		<include name="activation.jar"/>
+		<include name="mail.jar"/>
+		</fileset>
+	</copy>
 
 </project>
