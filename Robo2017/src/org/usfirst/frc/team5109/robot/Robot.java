@@ -10,15 +10,20 @@ import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 
+//import org.json.JSONObject;
 import com.ctre.CANTalon;
 
+import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.io.FileReader;
-import java.util.Scanner;
+import java.net.SocketException;
 import java.net.DatagramSocket;
+import java.net.DatagramPacket;
+
+
+
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -163,6 +168,9 @@ public class Robot extends SampleRobot {
     boolean recentlyShot = false;
     double recentShotTime;
     
+    //Declare UDP connection
+    DatagramSocket fromPi;
+    
    public Robot() {//constructor
 
 	   //established can motors
@@ -227,6 +235,12 @@ public class Robot extends SampleRobot {
         //usbCamera = new UsbCamera("USB Camera 0", 0);
         //CameraServer.getInstance().startAutomaticCapture();
         recentlyShot = false;
+		try{
+			fromPi = new DatagramSocket(5109);
+		}
+		catch(SocketException e){
+			DriverStation.reportError("Not connecting to Pi", false);
+		}
         
     }
 //driving
@@ -414,49 +428,51 @@ public class Robot extends SampleRobot {
    
    
     public void autoGearNew() { // 2017GRITS auto gear with vision tracking
-   	String data = getVisionData();
-   	Scanner sc =  new Scanner(data);
-		sc.useDelimiter(",");
-		double degreesToTurn = sc.nextDouble();
-		int keepDriving = sc.nextInt();
-		sc.close();
-   	
-   	while(keepDriving == 1){
-   		data = getVisionData();
+    	DriverStation.reportError("finding gear", false);
+    	double angle=0;
+    	boolean keepDriving=true;
+    	String data = getVisionData();
+    	DriverStation.reportError(data, false);
+    	
+    	
+    	String data2="0";
+//		JSONObject j = new JSONObject(data);
+//		keepDriving = j.getBoolean("Keep Driving");
+		while(keepDriving){
+			
+			data = getVisionData();
+			try{
+			data2 = data.substring(30, data.length()-1);
+			angle = Integer.getInteger(data2);
+			}
+			catch(Exception ex){
+				
+			}
+			
+			//j = new JSONObject(data);
+//			angle = j.getDouble("Angle");
+//			keepDriving = j.getBoolean("Keep Driving");
    		
-
-   		sc =  new Scanner(data);
-   		sc.useDelimiter(",");
-   		degreesToTurn = sc.nextDouble();
-   		keepDriving = sc.nextInt();
-   		sc.close();
-   		
-   		turnDegrees(degreesToTurn);//(xPosition / (cameraPxWidth/2)) * (cameraViewingAngle/2));
-   		Timer.delay(.005);
-   		straightMoveForward(1.0);
-   		Timer.delay(.005);
-   	}
-   	pushGear();
-   }
+			turnDegrees(angle);//(xPosition / (cameraPxWidth/2)) * (cameraViewingAngle/2));
+			Timer.delay(.005);
+			Timer.delay(.005);
+		}
+		pushGear();
+    }
    
    public String getVisionData(){ // 2017GRITS new command, reads file with vision data
-	   
-	   
-	   
-	   
+	   	DriverStation.reportError("Getting vision tracking data", false);
 		String line = "";
+		
+		byte[] b = new byte[100];
+		DatagramPacket p = new DatagramPacket(b, b.length);
 		try{
-		/*BufferedReader in = new BufferedReader(new FileReader("C:\\Users\\programmers\\Desktop\\Steamworks\\Vision Tracking\\data.txt"));
-		line = in.readLine();
-		in.close();*/
-			DatagramSocket s = new DatagramSocket(5109);
+			fromPi.receive(p);
 		}
 		catch(IOException ex){
-			System.out.println("");
-	        /*System.out.println (ex.toString());
-	        System.out.println("Could not find file data.txt");*/
+			DriverStation.reportError("Not recieving vision tracking data", false);
 	    }
-		
+		line = new String(b);
 		return line;
 	}
    
@@ -548,7 +564,9 @@ public class Robot extends SampleRobot {
   	DriverStation.reportError("Scale 2" + scale2.getOutputCurrent(), false);
   	DriverStation.reportError("Shooter 1" + shooter1.getOutputCurrent(), false);
   	DriverStation.reportError("Shooter 2" + shooter2.getOutputCurrent(), false);
-  	
+  	DriverStation.reportError("Doing autonomous", false);
+  	DriverStation.reportWarning("auto", false);
+
       int autoMode = 0; 
       double waitTime = .01;
       /*
@@ -559,7 +577,7 @@ public class Robot extends SampleRobot {
        * 5 - Blue Starting Position Middle
        * 6 - Blue Starting Position Right
        */
-      switch (autoMode) {
+     switch (autoMode) {
       case 1:
       	//moves forward to cross baseline/get close to peg
       	moveForward(76);
@@ -613,7 +631,7 @@ public class Robot extends SampleRobot {
       	}
       	intake.set(0);
       	*/
-      	break;
+     	break;
       case 3:
       	//moves forward to cross baseline/get close to peg
       	moveForward(77);
@@ -1053,8 +1071,8 @@ public class Robot extends SampleRobot {
   	boolean intakeBool = false;
   	boolean shooterBool = false;
   	while (isOperatorControl() && isEnabled()) {
-  		/*
-  		DriverStation.reportError("Left Drive 1 " + leftDrive1.getOutputCurrent(), false);
+  		
+  		/*DriverStation.reportError("Left Drive 1 " + leftDrive1.getOutputCurrent(), false);
       	DriverStation.reportError("Left Drive 2 " + leftDrive2.getOutputCurrent(), false);
       	DriverStation.reportError("Right Drive 1 " + rightDrive1.getOutputCurrent(), false);
       	DriverStation.reportError("Right Drive 2 " + rightDrive2.getOutputCurrent(), false);
@@ -1066,74 +1084,77 @@ public class Robot extends SampleRobot {
       	DriverStation.reportError("Shooter 2 " + shooter2.getOutputCurrent(), false);*/
   			//Shot speed controlled by Operator Throttle
   			//Intake toggled by Operator Button 5
+  		  		
+  		
   			if (operatorStick.getRawButton(5)) {
-	    			if (intakeBool) {
-	    				intakeBool = false;
-	    			}
-	    			else {
-	    				intakeBool = true;
-	    			}
-	    			Timer.delay(.2);
-	    		}
-	    		if (intakeBool ) {
-	    			intake.set(intakeSpeed * intakeConstant);
+	    		if (intakeBool) {
+	    			intakeBool = false;
 	    		}
 	    		else {
-	    			intake.set(0);
+	    			intakeBool = true;
 	    		}
+	    		Timer.delay(.2);
+	    	}
+	    	if (intakeBool ) {
+	    		intake.set(intakeSpeed * intakeConstant);
+	    	}
+	    	else {
+	    		intake.set(0);
+	    	}
 	    		
-	    		//Shooting controlled by Operator Trigger
-	    		if (operatorStick.getTrigger()) {
-	    			elevator.set(elevatorConstant * elevatorSpeed);
-	    		}
+	    	//Shooting controlled by Operator Trigger
+	    	if (operatorStick.getTrigger()) {
+	    		elevator.set(elevatorConstant * elevatorSpeed);
+	    	}
+	    	else {
+	    		if (operatorStick.getRawButton(2)) {
+		    		elevator.set(elevatorConstant * elevatorSpeed * -1);
+		    	}
 	    		else {
-	    			if (operatorStick.getRawButton(2)) {
-		    			elevator.set(elevatorConstant * elevatorSpeed * -1);
-		    		}
-	    			else {
-	    				elevator.set(0);
-	    			}
+	    			elevator.set(0);
 	    		}
+	    	}
 	    		
-	    		if (operatorStick.getRawButton(12)) {
-	    			if (shooterBool) {
-	    				shooterBool = false;
-	    			}
-	    			else {
-	    				shooterBool = true;
-	    			}
-	    			Timer.delay(.2);
-	    		}
-	    		
+	    	if (operatorStick.getRawButton(12)) {
 	    		if (shooterBool) {
-	    			shoot();
+	    			shooterBool = false;
 	    		}
 	    		else {
-	    			shooter1.set(0);
-	    			shooter2.set(0);
+	    			shooterBool = true;
 	    		}
-	    		//Scaling controlled by Operator Button 3
-	    		if (operatorStick.getRawButton(3)) {
+	    		Timer.delay(.2);
+	    	}
+	    		
+	    	if (shooterBool) {
+	    		shoot();
+	    	}
+	    	else {
+	    		shooter1.set(0);
+	    		shooter2.set(0);
+	    	}
+	    	
+	    	//Scaling controlled by Operator Button 3
+	    	if (operatorStick.getRawButton(3)) {
 					
-					scale1.set(.7 * scale1Constant);
-					scale2.set(.7 * scale2Constant);
+				scale1.set(.7 * scale1Constant);
+				scale2.set(.7 * scale2Constant);
 
-		        	DriverStation.reportError("Scale 1 " + scale1.getOutputCurrent(), false);
-		        	DriverStation.reportError("Scale 2 " + scale2.getOutputCurrent(), false);
-				}
-				else {
-					scale1.set(0);
-					scale2.set(0);
-				}
+		        DriverStation.reportError("Scale 1 " + scale1.getOutputCurrent(), false);
+		        DriverStation.reportError("Scale 2 " + scale2.getOutputCurrent(), false);
+			}
+			else {
+				scale1.set(0);
+				scale2.set(0);
+			}
 	    		
 	    	
   			//Flap controlled by Operator Button 4
   			if (operatorStick.getRawButton(4)) {
-	    			flap.set(false);
-	    		}
-	    		else {
-	    			flap.set(true);
-	    		}
+	    		flap.set(false);
+	    	}
+	    	else {
+	    		flap.set(true);
+	    	}
   			
   			
   			//Driver controls
@@ -1147,18 +1168,18 @@ public class Robot extends SampleRobot {
   				pushGear();
   			}
   			if (rightStick.getRawButton(2)) {
-	    			if (lowGear) {
-	    				leftShift.set(true);
-	    				rightShift.set(true);
-	    				lowGear = false;
-	    			}
-	    			else {
-	    				leftShift.set(false);
-	    				rightShift.set(false);
-	    				lowGear = true;
-	    			}
-	    			Timer.delay(.2);
+	    		if (lowGear) {
+	    			leftShift.set(true);
+	    			rightShift.set(true);
+	    			lowGear = false;
 	    		}
+	    		else {
+	    			leftShift.set(false);
+	    			rightShift.set(false);
+	    			lowGear = true;
+	    		}
+	    		Timer.delay(.2);
+	    	}
   			if (rightStick.getRawButton(11)) {
   				if (killScaling) {
   					killScaling = false;
@@ -1167,11 +1188,14 @@ public class Robot extends SampleRobot {
   					killScaling = true;
   				}
   			}
-  		
+  			if(rightStick.getRawButton(12)){
+  				
+  				autoGearNew();
+  			}
   		
   		Timer.delay(.005);
+  		}
   	}
-  }
   
    
    
@@ -1549,6 +1573,7 @@ when powered with 5V is 293mV for 300-mm, and 4.885V for 5000-mm.
 				scale1.set(0);
 				scale2.set(0);
 			}*/
+			
 			if (rightStick.getTrigger()) {
 				pushGear();
 			}
@@ -1595,6 +1620,7 @@ when powered with 5V is 293mV for 300-mm, and 4.885V for 5000-mm.
 			leftDrive1.set(leftDriveConstant * leftStick.getY());
 			leftDrive2.set(leftDriveConstant * leftStick.getY());
 			Timer.delay(.005);
+			
     	}
     }
 }
