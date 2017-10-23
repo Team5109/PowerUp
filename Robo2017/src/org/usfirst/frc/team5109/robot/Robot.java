@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 
-//import org.json.JSONObject;
+import org.json.JSONObject;
 import com.ctre.CANTalon;
 
 import java.util.Scanner;
@@ -281,7 +281,8 @@ public class Robot extends SampleRobot {
        		Timer.delay(.005);
        	}
        }
-       else {
+       else 
+       {
        	distance *= -1;
        	while (rightDrivetrain.getDistance() * rightEncoderConstant > -distance && leftDrivetrain.getDistance() * leftEncoderConstant < distance  && !operatorStick.getRawButton(11)) {
        		DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
@@ -290,7 +291,7 @@ public class Robot extends SampleRobot {
        		rightDrive2.set(rightTurnSpeed * rightDriveConstant);
        		leftDrive1.set(-leftTurnSpeed * leftDriveConstant);
        		leftDrive2.set(-leftTurnSpeed * leftDriveConstant);
-       		Timer.delay(.005);
+       		Timer.delay(10);
        	}
        	while (rightDrivetrain.getDistance() * rightEncoderConstant > -distance  && !operatorStick.getRawButton(11)) {
        		DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
@@ -308,7 +309,7 @@ public class Robot extends SampleRobot {
        	}
        }
        rightDrive1.set(0);
-		rightDrive2.set(0);
+       rightDrive2.set(0);
 		leftDrive1.set(0);
 		leftDrive2.set(0);
    }
@@ -410,6 +411,7 @@ public class Robot extends SampleRobot {
    
    
    
+   
 //gear
    
    public void pushGear() {
@@ -428,36 +430,26 @@ public class Robot extends SampleRobot {
    
    
     public void autoGearNew() { // 2017GRITS auto gear with vision tracking
-    	DriverStation.reportError("finding gear", false);
     	double angle=0;
     	boolean keepDriving=true;
     	String data = getVisionData();
     	DriverStation.reportError(data, false);
     	
-    	
-    	String data2="0";
-//		JSONObject j = new JSONObject(data);
-//		keepDriving = j.getBoolean("Keep Driving");
-		while(keepDriving){
+		JSONObject j = new JSONObject(data);
+		keepDriving = j.getBoolean("Keep Driving");
+		while(keepDriving && !rightStick.getRawButton(12)){
 			
 			data = getVisionData();
-			try{
-			data2 = data.substring(30, data.length()-1);
-			angle = Integer.getInteger(data2);
-			}
-			catch(Exception ex){
-				
-			}
 			
-			//j = new JSONObject(data);
-//			angle = j.getDouble("Angle");
-//			keepDriving = j.getBoolean("Keep Driving");
+			j = new JSONObject(data);
+			angle = j.getDouble("Angle");
+			keepDriving = j.getBoolean("Keep Driving");
    		
 			turnDegrees(angle);//(xPosition / (cameraPxWidth/2)) * (cameraViewingAngle/2));
-			Timer.delay(.005);
-			Timer.delay(.005);
+			Timer.delay(.5);
 		}
-		pushGear();
+		//pushGear();
+		DriverStation.reportError("done turning", false);
     }
    
    public String getVisionData(){ // 2017GRITS new command, reads file with vision data
@@ -1166,6 +1158,7 @@ public class Robot extends SampleRobot {
   			
   			if (rightStick.getTrigger()) {
   				pushGear();
+  				//autoGearNew();
   			}
   			if (rightStick.getRawButton(2)) {
 	    		if (lowGear) {
@@ -1187,10 +1180,6 @@ public class Robot extends SampleRobot {
   				else {
   					killScaling = true;
   				}
-  			}
-  			if(rightStick.getRawButton(12)){
-  				
-  				autoGearNew();
   			}
   		
   		Timer.delay(.005);
@@ -1462,7 +1451,14 @@ when powered with 5V is 293mV for 300-mm, and 4.885V for 5000-mm.
     }
 
     public void test() {
-    	int scaleTest = 0;
+    	boolean temp = true;
+    	while(temp){
+    	Timer.delay(1.1);
+    	turnDegrees(1);
+    	
+    	}
+    }
+    	/*int scaleTest = 0;
     	boolean startup = false;
     	while (isTest() && isEnabled()) {
     		if (leftStick.getRawButton(11)) {
@@ -1509,7 +1505,7 @@ when powered with 5V is 293mV for 300-mm, and 4.885V for 5000-mm.
 				moveForward(30);
 				DriverStation.reportError("Left Drivetrain: " + leftDrivetrain.getDistance(), false);
 				DriverStation.reportError("Right Drivetrain: " + rightDrivetrain.getDistance(), false);
-			}
+			}/*
 			/*
 			if (leftStick.getTrigger()) {
 				shooter1.set(shooter1Constant * (shooterSpeed + .075));
@@ -1534,7 +1530,7 @@ when powered with 5V is 293mV for 300-mm, and 4.885V for 5000-mm.
 				elevator.set(0);
 			}*/
 			
-			if (rightStick.getRawButton(3)){
+			/*if (rightStick.getRawButton(3)){
 				
 				elevator.set(elevatorConstant * elevatorSpeed); //might be wrong look  here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! (try : elevatorSpeed * elevatorConstant)
 				Timer.delay(.2);
@@ -1555,7 +1551,7 @@ when powered with 5V is 293mV for 300-mm, and 4.885V for 5000-mm.
 				shooter1.set(0);
 				shooter2.set(0);
 				elevator.set(0);
-			}
+			}*/
 			
 			/*if (scaleTest == 1) {
 				scale1.set(.3 * scale1Constant);
@@ -1574,7 +1570,7 @@ when powered with 5V is 293mV for 300-mm, and 4.885V for 5000-mm.
 				scale2.set(0);
 			}*/
 			
-			if (rightStick.getTrigger()) {
+			/*if (rightStick.getTrigger()) {
 				pushGear();
 			}
 			if (rightStick.getRawButton(6)) {
@@ -1622,7 +1618,7 @@ when powered with 5V is 293mV for 300-mm, and 4.885V for 5000-mm.
 			Timer.delay(.005);
 			
     	}
-    }
+    }*/
 }
 
 
