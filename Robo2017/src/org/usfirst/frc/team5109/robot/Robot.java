@@ -430,6 +430,7 @@ public class Robot extends SampleRobot {
    
    
     public void autoGearNew() { // 2017GRITS auto gear with vision tracking
+    	DriverStation.reportError("finding gear", false);
     	double angle=0;
     	boolean keepDriving=true;
     	String data = getVisionData();
@@ -448,7 +449,7 @@ public class Robot extends SampleRobot {
 			turnDegrees(angle);//(xPosition / (cameraPxWidth/2)) * (cameraViewingAngle/2));
 			Timer.delay(.5);
 		}
-		//pushGear();
+		pushGear();
 		DriverStation.reportError("done turning", false);
     }
    
@@ -1181,6 +1182,9 @@ public class Robot extends SampleRobot {
   					killScaling = true;
   				}
   			}
+  			if(rightStick.getRawButton(12)){ 				
+  				autoGearNew();
+  			}
   		
   		Timer.delay(.005);
   		}
@@ -1451,11 +1455,11 @@ when powered with 5V is 293mV for 300-mm, and 4.885V for 5000-mm.
     }
 
     public void test() {
-    	boolean temp = true;
+/*    	boolean temp = true;
     	while(temp){
     	Timer.delay(1.1);
     	turnDegrees(1);
-    	
+    */	
     	}
     }
     	/*int scaleTest = 0;
