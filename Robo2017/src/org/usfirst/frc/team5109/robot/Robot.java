@@ -1459,8 +1459,7 @@ when powered with 5V is 293mV for 300-mm, and 4.885V for 5000-mm.
     	while(temp){
     	Timer.delay(1.1);
     	turnDegrees(1);
-    */	
-    	}
+    	}*/
     }
     	/*int scaleTest = 0;
     	boolean startup = false;
