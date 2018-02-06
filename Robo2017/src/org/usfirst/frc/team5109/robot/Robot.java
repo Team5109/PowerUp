@@ -112,7 +112,7 @@ public class Robot extends IterativeRobot {
 		leftMotor1.set(ControlMode.PercentOutput, leftJoy.getY());
 		leftMotor2.set(ControlMode.PercentOutput, leftJoy.getY());
 		rightMotor1.set(ControlMode.PercentOutput, rightJoy.getY());
-		rightMotor2.set(ControlMode.PercentOutput, 1);
+		rightMotor2.set(ControlMode.PercentOutput, rightJoy.getY());
 		compressor.setClosedLoopControl(true);
 		compressor.start();
 		double x = 0;
