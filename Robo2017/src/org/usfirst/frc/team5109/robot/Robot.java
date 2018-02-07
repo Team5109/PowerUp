@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Encoder;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -44,7 +45,19 @@ public class Robot extends IterativeRobot {
 	Solenoid Solenoid4 = new Solenoid(4);//1
 	Compressor compressor;
 	boolean lowgear = false;
-	
+	Encoder testEncoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+	/*testEncoder.setMaxPeriod(.1);
+	testEncoder.setMinRate(10);
+	testEncoder.setDistancePerPulse(5);
+	testEncoder.setReverseDirection(true);
+	testEncoder.setSamplesToAverage(7);*/
+	int count = testEncoder.get();
+	double encoderDistanceRaw = testEncoder.getRaw();
+	double encoderDistance = testEncoder.getDistance();
+	//double period = testEncoder.getPeriod();
+	double rate = testEncoder.getRate();
+	boolean direction = testEncoder.getDirection();
+	boolean stopped = testEncoder.getStopped();
 	
 
 
