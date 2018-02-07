@@ -35,7 +35,7 @@ imu.setCompassEnable(True)
 poll_interval = imu.IMUGetPollInterval()
 print("Recommended Poll Interval: %dmS\n" % poll_interval)
 
-ip = "roborio-5109-frc.local"
+ip = "10.51.9.2"
 
 #NetworkTables.initialize(server = ip)
 
