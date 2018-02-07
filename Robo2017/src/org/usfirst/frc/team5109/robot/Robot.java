@@ -258,6 +258,38 @@ public class Robot extends IterativeRobot {
 		rightMotor1.set(ControlMode.PercentOutput, speed);
 		rightMotor2.set(ControlMode.PercentOutput, speed);
 	}
+	public void moveOnYAxis(int speed) { //0 - 255 and moves full robot forwards or backwards
+		leftMotor1.set(ControlMode.PercentOutput, speed);
+		leftMotor2.set(ControlMode.PercentOutput, speed);
+		rightMotor1.set(ControlMode.PercentOutput, speed);
+		rightMotor2.set(ControlMode.PercentOutput, speed);
+	}
+	public void turn90(int degree) {//90 or -90 nothing else works, and turns in a perfect right angle
+		if (degree == 90) {
+			leftMotor1.set(ControlMode.PercentOutput, 25);
+			leftMotor2.set(ControlMode.PercentOutput, 25);
+			rightMotor1.set(ControlMode.PercentOutput, -25);
+			rightMotor2.set(ControlMode.PercentOutput, -25);
+		} else if(degree == -90) {
+			leftMotor1.set(ControlMode.PercentOutput, -25);
+			leftMotor2.set(ControlMode.PercentOutput, -25);
+			rightMotor1.set(ControlMode.PercentOutput, 25);
+			rightMotor2.set(ControlMode.PercentOutput, 25);
+		}
+	}
+	public void turn45(int degree2) {//45 or -45 nothing else works, and turns in a perfect right angle
+		if (degree2 == 45) {
+			leftMotor1.set(ControlMode.PercentOutput, 4);
+			leftMotor2.set(ControlMode.PercentOutput, 4);
+			rightMotor1.set(ControlMode.PercentOutput, -4);
+			rightMotor2.set(ControlMode.PercentOutput, -4);
+		} else if(degree2 == -45) {
+			leftMotor1.set(ControlMode.PercentOutput, -4);
+			leftMotor2.set(ControlMode.PercentOutput, -4);
+			rightMotor1.set(ControlMode.PercentOutput, 4);
+			rightMotor2.set(ControlMode.PercentOutput, 4);
+		}
+	}
 	@Override
 	public void testPeriodic() {
 	}
