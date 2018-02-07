@@ -91,14 +91,87 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		int automode = 1;
-		double waitTime = 0.01;
+		int automode = 1; //which auto case we r gonna run
+		double waitTime = 0.1; //the wait time for each action
+		String gameData;
+		gameData = DriverStation.getInstance().getGameSpecificMessage();
 		switch(automode) {
-		case 1:
-			moveForward(8);
-			
+		case 1: //right side
+			   if(gameData.charAt(0) == 'R'){
+			       moveOnYAxis(100);
+			       Timer.delay(waitTime);
+			       turn90(-90);
+			       Timer.delay(waitTime);
+			       moveOnYAxis(50);
+			       Timer.delay(waitTime);
+			       break;
+			   } else if(gameData.charAt(0) == 'R') {
+				   moveOnYAxis(200);
+			       Timer.delay(2*waitTime);
+			       turn90(-90);
+			       Timer.delay(waitTime);
+			       moveOnYAxis(50);
+			       Timer.delay(waitTime);
+			       break;
+			   }
+			   else {
+				   moveOnYAxis(255);
+			       Timer.delay(3*waitTime);
+			       turn90(-90);
+			       Timer.delay(waitTime);
+			       moveOnYAxis(50);
+			       Timer.delay(waitTime);
+			       break;
+			   }
+		case 2: //middle
+			   if(gameData.charAt(0) == 'R') {
+				   moveOnYAxis(100);
+				   Timer.delay(waitTime);
+				   turn45(45);
+				   moveOnYAxis(100);
+				   Timer.delay(2/waitTime);
+				   break;
+			   } else {
+				   moveOnYAxis(100);
+				   Timer.delay(waitTime);
+				   turn45(-45);
+				   moveOnYAxis(100);
+				   Timer.delay(2/waitTime);
+				   break;
+			   }
+		case 3:
+			   if(gameData.charAt(0) == 'L'){
+			       moveOnYAxis(100);
+			       Timer.delay(waitTime);
+			       turn90(90);
+			       Timer.delay(waitTime);
+			       moveOnYAxis(50);
+			       Timer.delay(waitTime);
+			       break;
+			   } else if(gameData.charAt(0) == 'L') {
+				   moveOnYAxis(200);
+			       Timer.delay(2*waitTime);
+			       turn90(90);
+			       Timer.delay(waitTime);
+			       moveOnYAxis(50);
+			       Timer.delay(waitTime);
+			       break;
+			   }
+			   else {
+				   moveOnYAxis(255);
+			       Timer.delay(3*waitTime);
+			       turn90(90);
+			       Timer.delay(waitTime);
+			       moveOnYAxis(50);
+			       Timer.delay(waitTime);
+			       break;
+			   }
 		}
 	}
+
+	/**
+	 * This function is called periodically during autonomous.
+	 */
 
 	/**
 	 * This function is called periodically during autonomous.
