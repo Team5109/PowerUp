@@ -252,12 +252,6 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during test mode.
 	 */
-	public void moveForward(int speed) {
-		leftMotor1.set(ControlMode.PercentOutput, speed);
-		leftMotor2.set(ControlMode.PercentOutput, speed);
-		rightMotor1.set(ControlMode.PercentOutput, speed);
-		rightMotor2.set(ControlMode.PercentOutput, speed);
-	}
 	public void moveOnYAxis(int speed) { //0 - 255 and moves full robot forwards or backwards
 		leftMotor1.set(ControlMode.PercentOutput, speed);
 		leftMotor2.set(ControlMode.PercentOutput, speed);
