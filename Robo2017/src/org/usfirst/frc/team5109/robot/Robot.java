@@ -1,3 +1,4 @@
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -22,6 +23,7 @@ import edu.wpi.first.networktables.*;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DriverStation;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -30,29 +32,31 @@ import edu.wpi.first.wpilibj.Encoder;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	TalonSRX leftMotor1 =  new TalonSRX(0);
-	TalonSRX leftMotor2 =  new TalonSRX(0);
+	TalonSRX leftMotor1 =  new TalonSRX(10);
+	TalonSRX leftMotor2 =  new TalonSRX(10);
 	TalonSRX rightMotor1 =  new TalonSRX(10);//10
 	TalonSRX rightMotor2 =  new TalonSRX(1);//10
 	Joystick leftJoy = new Joystick(0);
-	Joystick rightJoy = new Joystick(0);
+	Joystick rightJoy = new Joystick(1);
 	// Solenoids for ....
 	Solenoid Solenoid2 = new Solenoid(2);//1
 	Solenoid Solenoid1 = new Solenoid(1);
 	Solenoid Solenoid3 = new Solenoid(3);
+	
 	Solenoid Solenoid5 = new Solenoid(5);
 	//Solenoids for gear shifting
 	Solenoid Solenoid4 = new Solenoid(4);//1
 	Compressor compressor;
 	boolean lowgear = false;
-	Encoder testEncoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+	Encoder testEncoder = new Encoder(0, 1);
+	testEncoder.setDistancePerPulse(5);
 	/*testEncoder.setMaxPeriod(.1);
 	testEncoder.setMinRate(10);
 	testEncoder.setDistancePerPulse(5);
 	testEncoder.setReverseDirection(true);
 	testEncoder.setSamplesToAverage(7);*/
 	int count = testEncoder.get();
-	double encoderDistanceRaw = testEncoder.getRaw();
+	
 	double encoderDistance = testEncoder.getDistance();
 	//double period = testEncoder.getPeriod();
 	double rate = testEncoder.getRate();
@@ -61,6 +65,9 @@ public class Robot extends IterativeRobot {
 	
 
 
+	//NetworkTable imutable = NetworkTable.getTable("IMU Table");
+
+ 
 
 	
 
@@ -74,9 +81,23 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		compressor = new Compressor(0);
 		CameraServer.getInstance().startAutomaticCapture();
-		NetworkTableInstance table = NetworkTableInstance.getDefault();
+		/*NetworkTableInstance table = NetworkTableInstance.getDefault();
 		NetworkTableInstance instance = NetworkTableInstance.getDefault();
 		NetworkTable rootTable = instance.getTable("");
+		System.out.println(rootTable);
+		double[] defaultValue = new double[0];
+		while(true) {
+			double[] areas = table.getNumberArray("area",defaultValue);
+			for(double area : areas) {
+				System.out.println(area + " ");
+			}
+			System.out.println();
+			Timer.delay(1);
+		} */
+		//NetworkTable imutable = NetworkTable.getTable("IMU Table");
+		//System.out.println(imutable.getNumber("roll", "Error receiving roll"));
+	    //System.out.println(imutable.getNumber("pitch", "Error receiving pitch"));
+	    //System.out.println(imutable.getNumber("yaw", "Error receiving yaw"));
 		//exampleSolenoid.set(true);
 		//exampleSolenoid.set(false);
 		//c.setClosedLoopControl(true);
@@ -91,7 +112,29 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		int automode = 1; //which auto case we r gonna run
+		testEncoder.reset();
+		//testEncoder.setDistancePerPulse(.01840775);
+		testEncoder.setDistancePerPulse(1/360);
+	}
+	/**
+	 * This function is called periodically during autonomous.
+	 */
+	public void autonomousPeriodic() {
+		/*testEncoder.reset();
+		double length = testEncoder.getDistance();
+		double dist = testEncoder.getDistancePerPulse();
+		System.out.println(dist);
+		
+		while (length <= 1)	{
+			leftMotor1.set(ControlMode.PercentOutput, .5);
+			System.out.println(length);
+		}
+		leftMotor1.set(ControlMode.PercentOutput, 0);
+		*/
+		
+		
+	}
+		/*int automode = 1; //which auto case we r gonna run
 		double waitTime = 0.1; //the wait time for each action
 		String gameData;
 		gameData = DriverStation.getInstance().getGameSpecificMessage();
@@ -167,22 +210,9 @@ public class Robot extends IterativeRobot {
 			       break;
 			   }
 		}
-	}
+	}	
 
-	/**
-	 * This function is called periodically during autonomous.
-	 */
-
-	/**
-	 * This function is called periodically during autonomous.
-	 */
-	public void autonomousPeriodic() {
-		
-		}
-		
-				
-
-
+	*/
 	/**
 	 * This function is called once each time the robot enters teleoperated mode.
 	 */
@@ -195,10 +225,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		compressor = new Compressor(0);
 		leftMotor1.set(ControlMode.PercentOutput, leftJoy.getY());
 		leftMotor2.set(ControlMode.PercentOutput, leftJoy.getY());
-		rightMotor1.set(ControlMode.PercentOutput, rightJoy.getY());
-		rightMotor2.set(ControlMode.PercentOutput, rightJoy.getY());
+		rightMotor1.set(ControlMode.PercentOutput, -1 * rightJoy.getY());
+		rightMotor2.set(ControlMode.PercentOutput, -1 * rightJoy.getY());
 		compressor.setClosedLoopControl(true);
 		compressor.start();
 		double x = 0;
@@ -234,10 +265,12 @@ public class Robot extends IterativeRobot {
 		}
 		if (rightJoy.getRawButton(2)) {
 			if (lowgear) {
-				Solenoid3.set(true);
+				Solenoid2.set(true);
+				Solenoid1.set(true);
 				lowgear = false;
 			} else {
-				Solenoid3.set(false);
+				Solenoid2.set(false);
+				Solenoid1.set(false);
 				lowgear = true;
 			}
 			Timer.delay(.2);	
@@ -253,8 +286,8 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during test mode.
 	 */
 	public void moveOnYAxis(int speed) { //0 - 255 and moves full robot forwards or backwards
-		leftMotor1.set(ControlMode.PercentOutput, speed);
-		leftMotor2.set(ControlMode.PercentOutput, speed);
+		leftMotor1.set(ControlMode.PercentOutput, -1*speed);
+		leftMotor2.set(ControlMode.PercentOutput, -1*speed);
 		rightMotor1.set(ControlMode.PercentOutput, speed);
 		rightMotor2.set(ControlMode.PercentOutput, speed);
 	}
@@ -262,8 +295,8 @@ public class Robot extends IterativeRobot {
 		if (degree == 90) {
 			leftMotor1.set(ControlMode.PercentOutput, 25);
 			leftMotor2.set(ControlMode.PercentOutput, 25);
-			rightMotor1.set(ControlMode.PercentOutput, -25);
-			rightMotor2.set(ControlMode.PercentOutput, -25);
+			rightMotor1.set(ControlMode.PercentOutput, 25);
+			rightMotor2.set(ControlMode.PercentOutput, 25);
 		} else if(degree == -90) {
 			leftMotor1.set(ControlMode.PercentOutput, -25);
 			leftMotor2.set(ControlMode.PercentOutput, -25);
@@ -286,5 +319,18 @@ public class Robot extends IterativeRobot {
 	}
 	@Override
 	public void testPeriodic() {
+		leftMotor1.set(ControlMode.PercentOutput, .5);
+		double encoderDistanceRaw = testEncoder.getRaw();
+		boolean encoderDirection = testEncoder.getDirection();
+		int count = testEncoder.get();
+		//System.out.println(encoderDirection);
+		//System.out.println(encoderDistanceRaw);
+		//System.out.println(count);
+		
+		//inches per pulse = .0736310in/pulse
+		double rate = testEncoder.getRate();
+		System.out.println(rate * -1);
+		
+		
 	}
 }
