@@ -2,7 +2,7 @@ package org.usfirst.frc.team5109.robot;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 
-  NetworkTable imutable = NetworkTable.getTable("IMU Table");
+  NetworkTable imutable = NetworkTable.getSubTable("IMU Table");
 
   while(true) {
     
