@@ -6,9 +6,9 @@ import edu.wpi.first.wpilibj.SampleRobot;
 
   while(true) {
     
-    System.out.println(imutable.getNumber("roll", "Error receiving roll"));
-    System.out.println(imutable.getNumber("pitch", "Error receiving pitch"));
-    System.out.println(imutable.getNumber("yaw", "Error receiving yaw"));
+    System.out.println(imutable.getEntry("roll"));
+    System.out.println(imutable.getEntry("pitch"));
+    System.out.println(imutable.getEntry("yaw"));
     
     Timer.delay(0.001);
   }
