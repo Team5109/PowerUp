@@ -1,0 +1,14 @@
+package org.usfirst.frc.team5109.robot;
+
+import edu.wpi.first.wpilibj.SampleRobot;
+
+  NetworkTable imutable = NetworkTable.getTable("IMU Table");
+
+  while(true) {
+    
+    System.out.println(imutable.getNumber("roll", "Error receiving roll"));
+    System.out.println(imutable.getNumber("pitch", "Error receiving pitch"));
+    System.out.println(imutable.getNumber("yaw", "Error receiving yaw"));
+    
+    Timer.delay(0.001);
+  }
