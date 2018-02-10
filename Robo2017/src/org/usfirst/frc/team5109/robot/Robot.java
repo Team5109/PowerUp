@@ -32,10 +32,10 @@ import edu.wpi.first.wpilibj.DriverStation;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	TalonSRX leftMotor1 =  new TalonSRX(10);
-	TalonSRX leftMotor2 =  new TalonSRX(10);
-	TalonSRX rightMotor1 =  new TalonSRX(10);//10
-	TalonSRX rightMotor2 =  new TalonSRX(1);//10
+	TalonSRX leftMotor1 =  new TalonSRX(2);
+	TalonSRX leftMotor2 =  new TalonSRX(1);
+	TalonSRX rightMotor1 =  new TalonSRX(7);//10
+	TalonSRX rightMotor2 =  new TalonSRX(6);//10
 	Joystick leftJoy = new Joystick(0);
 	Joystick rightJoy = new Joystick(1);
 	// Solenoids for ....
@@ -48,20 +48,23 @@ public class Robot extends IterativeRobot {
 	Solenoid Solenoid4 = new Solenoid(4);//1
 	Compressor compressor;
 	boolean lowgear = false;
-	Encoder testEncoder = new Encoder(0, 1);
-	testEncoder.setDistancePerPulse(5);
+	Encoder testEncoder = new Encoder(0, 1, true); // Has to be true i think
+	//testEncoder.setDistancePerPulse(5);
 	/*testEncoder.setMaxPeriod(.1);
 	testEncoder.setMinRate(10);
 	testEncoder.setDistancePerPulse(5);
 	testEncoder.setReverseDirection(true);
 	testEncoder.setSamplesToAverage(7);*/
-	int count = testEncoder.get();
 	
 	double encoderDistance = testEncoder.getDistance();
 	//double period = testEncoder.getPeriod();
-	double rate = testEncoder.getRate();
+	
 	boolean direction = testEncoder.getDirection();
 	boolean stopped = testEncoder.getStopped();
+	//For the encoder do not move 
+	int count = 0;
+	int i = 0;
+	boolean testing = true;
 	
 
 
@@ -112,14 +115,68 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		testEncoder.reset();
+
 		//testEncoder.setDistancePerPulse(.01840775);
-		testEncoder.setDistancePerPulse(1/360);
+		testEncoder.reset();
 	}
 	/**
 	 * This function is called periodically during autonomous.
 	 */
 	public void autonomousPeriodic() {
+		
+		/*double count_1 = 0;
+		boolean count_2 = false;
+		boolean count_3 = false;
+		double count_4 = 0;
+		*/
+		
+		leftMotor1.set(ControlMode.PercentOutput, .5);
+		/*while (count <= 256) {
+			
+			count = testEncoder.get();
+			System.out.println(i + " " + count);
+			i += 1;
+			*/
+		
+		//More motors can be turned on autonomously if they are both added within the if else statement
+		while (testing = true) {
+			count = testEncoder.get();
+			if (count <= 256) {
+				leftMotor1.set(ControlMode.PercentOutput, .5);
+				System.out.println(i + " " + count);
+				i += 1;
+			}
+			else {
+				leftMotor1.set(ControlMode.PercentOutput, 0);
+				testing = false;
+				System.out.println(i + " " + count);
+				System.out.println("It is stopping");
+				i += 1;
+			}
+			
+		}
+		
+			/*count_1 = testEncoder.getRate();
+			System.out.println("count 1"+ count_1);
+			count_2 = testEncoder.getDirection();
+			System.out.println("count 2" + count_2);
+			count_3 = testEncoder.getStopped();
+			System.out.println("count_3" + count_3);
+			count_4 = testEncoder.getRaw();
+			System.out.println("count_4" + count_4);
+			*/
+		
+	
+		/*int count = testEncoder.get();
+		double distance = testEncoder.getRaw();
+		double getdistance = testEncoder.getDistance();
+		double rate = testEncoder.getRate();
+		boolean direction = testEncoder.getDirection();
+		boolean stopped = testEncoder.getStopped();
+		
+		System.out.println(getdistance);*/	
+		
+		
 		/*testEncoder.reset();
 		double length = testEncoder.getDistance();
 		double dist = testEncoder.getDistancePerPulse();
@@ -131,7 +188,6 @@ public class Robot extends IterativeRobot {
 		}
 		leftMotor1.set(ControlMode.PercentOutput, 0);
 		*/
-		
 		
 	}
 		/*int automode = 1; //which auto case we r gonna run
@@ -237,16 +293,6 @@ public class Robot extends IterativeRobot {
 		//NetworkTableEntry xValue = NetworkTableEntry.setDouble(x);
 		//NetworkTableEntry yValue = NetworkTableEntry.setDouble(y);
 		//in and out for two cylinders using button 2
-		if(leftJoy.getRawButton(1)) {
-			Solenoid1.set(false);
-		} else {
-			Solenoid1.set(true);
-		}
-		if(leftJoy.getRawButton(2)) {
-			Solenoid2.set(false);
-		} else {
-			Solenoid2.set(true);
-		}
 		
 		if(leftJoy.getRawButton(3)) {
 			Solenoid3.set(false);
@@ -266,11 +312,11 @@ public class Robot extends IterativeRobot {
 		if (rightJoy.getRawButton(2)) {
 			if (lowgear) {
 				Solenoid2.set(true);
-				Solenoid1.set(true);
+				Solenoid1.set(false);
 				lowgear = false;
 			} else {
 				Solenoid2.set(false);
-				Solenoid1.set(false);
+				Solenoid1.set(true);
 				lowgear = true;
 			}
 			Timer.delay(.2);	
@@ -303,9 +349,7 @@ public class Robot extends IterativeRobot {
 			rightMotor1.set(ControlMode.PercentOutput, 25);
 			rightMotor2.set(ControlMode.PercentOutput, 25);
 		}
-	}
-	public void turn45(int degree2) {//45 or -45 nothing else works, and turns in a perfect right angle
-		if (degree2 == 45) {
+		/*if (degree2 == 45) {
 			leftMotor1.set(ControlMode.PercentOutput, 4);
 			leftMotor2.set(ControlMode.PercentOutput, 4);
 			rightMotor1.set(ControlMode.PercentOutput, -4);
@@ -315,11 +359,11 @@ public class Robot extends IterativeRobot {
 			leftMotor2.set(ControlMode.PercentOutput, -4);
 			rightMotor1.set(ControlMode.PercentOutput, 4);
 			rightMotor2.set(ControlMode.PercentOutput, 4);
-		}
+		}*/
 	}
 	@Override
 	public void testPeriodic() {
-		leftMotor1.set(ControlMode.PercentOutput, .5);
+		/*leftMotor1.set(ControlMode.PercentOutput, .5);
 		double encoderDistanceRaw = testEncoder.getRaw();
 		boolean encoderDirection = testEncoder.getDirection();
 		int count = testEncoder.get();
@@ -329,7 +373,8 @@ public class Robot extends IterativeRobot {
 		
 		//inches per pulse = .0736310in/pulse
 		double rate = testEncoder.getRate();
-		System.out.println(rate * -1);
+		//System.out.println(rate * -1);
+		*/
 		
 		
 	}
