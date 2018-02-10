@@ -97,10 +97,10 @@ public class Robot extends IterativeRobot {
 			System.out.println();
 			Timer.delay(1);
 		} */
-		//NetworkTable imutable = NetworkTable.getTable("IMU Table");
-		//System.out.println(imutable.getNumber("roll", "Error receiving roll"));
-	    //System.out.println(imutable.getNumber("pitch", "Error receiving pitch"));
-	    //System.out.println(imutable.getNumber("yaw", "Error receiving yaw"));
+		//NetworkTable imutable = NetworkTable.getSubTable("IMU Table");
+		//System.out.println(imutable.getEntry("roll"));
+	    //System.out.println(imutable.getEntry("pitch"));
+	    //System.out.println(imutable.getEntry("yaw"));
 		//exampleSolenoid.set(true);
 		//exampleSolenoid.set(false);
 		//c.setClosedLoopControl(true);
