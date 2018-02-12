@@ -32,31 +32,33 @@ import edu.wpi.first.wpilibj.DriverStation;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	TalonSRX leftMotor1 =  new TalonSRX(2);
-	TalonSRX leftMotor2 =  new TalonSRX(1);
-	TalonSRX rightMotor1 =  new TalonSRX(7);//10
-	TalonSRX rightMotor2 =  new TalonSRX(6);//10
+	TalonSRX rightMotor1 =  new TalonSRX(6);
+	TalonSRX rightMotor2 =  new TalonSRX(10);
+	TalonSRX leftMotor1 =  new TalonSRX(5);//10
+	TalonSRX leftMotor2 =  new TalonSRX(4);//10
+	TalonSRX rightElevatorMotor = new TalonSRX(2);
+	TalonSRX leftElevatorMotor = new TalonSRX(1);
 	Joystick leftJoy = new Joystick(0);
 	Joystick rightJoy = new Joystick(1);
-	// Solenoids for ....
+	Joystick operator = new Joystick(2);
+	// Solenoids for gear shifting
 	Solenoid Solenoid2 = new Solenoid(2);//1
 	Solenoid Solenoid1 = new Solenoid(1);
+	// Anand's Solenoids, 0 is used for clamping, 3 is used for extending
+	Solenoid Solenoid0 = new Solenoid(0);
+	boolean clamped = false;
 	Solenoid Solenoid3 = new Solenoid(3);
+	boolean extended = false;
 	
 	Solenoid Solenoid5 = new Solenoid(5);
 	//Solenoids for gear shifting
 	Solenoid Solenoid4 = new Solenoid(4);//1
 	Compressor compressor;
 	boolean lowgear = false;
-	Encoder testEncoder = new Encoder(0, 1, true); // Has to be true i think
-	//testEncoder.setDistancePerPulse(5);
-	/*testEncoder.setMaxPeriod(.1);
-	testEncoder.setMinRate(10);
-	testEncoder.setDistancePerPulse(5);
-	testEncoder.setReverseDirection(true);
-	testEncoder.setSamplesToAverage(7);*/
+	Encoder testEncoder = new Encoder(0, 1, true); 
 	
-	double encoderDistance = testEncoder.getDistance();
+	
+	double length = testEncoder.getDistance();
 	//double period = testEncoder.getPeriod();
 	
 	boolean direction = testEncoder.getDirection();
@@ -84,6 +86,8 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		compressor = new Compressor(0);
 		CameraServer.getInstance().startAutomaticCapture();
+	testEncoder.setDistancePerPulse(1);
+		/*.0184
 		/*NetworkTableInstance table = NetworkTableInstance.getDefault();
 		NetworkTableInstance instance = NetworkTableInstance.getDefault();
 		NetworkTable rootTable = instance.getTable("");
@@ -115,163 +119,23 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-
-		//testEncoder.setDistancePerPulse(.01840775);
-		testEncoder.reset();
+	
+		//testEncoder.reset();
+	
 	}
 	/**
 	 * This function is called periodically during autonomous.
 	 */
 	public void autonomousPeriodic() {
-		
-		/*double count_1 = 0;
-		boolean count_2 = false;
-		boolean count_3 = false;
-		double count_4 = 0;
-		*/
-		
 		leftMotor1.set(ControlMode.PercentOutput, .5);
-		/*while (count <= 256) {
-			
-			count = testEncoder.get();
-			System.out.println(i + " " + count);
-			i += 1;
-			*/
-		
-		//More motors can be turned on autonomously if they are both added within the if else statement
-		while (testing = true) {
-			count = testEncoder.get();
-			if (count <= 256) {
-				leftMotor1.set(ControlMode.PercentOutput, .5);
-				System.out.println(i + " " + count);
-				i += 1;
-			}
-			else {
-				leftMotor1.set(ControlMode.PercentOutput, 0);
-				testing = false;
-				System.out.println(i + " " + count);
-				System.out.println("It is stopping");
-				i += 1;
-			}
-			
-		}
-		
-			/*count_1 = testEncoder.getRate();
-			System.out.println("count 1"+ count_1);
-			count_2 = testEncoder.getDirection();
-			System.out.println("count 2" + count_2);
-			count_3 = testEncoder.getStopped();
-			System.out.println("count_3" + count_3);
-			count_4 = testEncoder.getRaw();
-			System.out.println("count_4" + count_4);
-			*/
-		
-	
-		/*int count = testEncoder.get();
-		double distance = testEncoder.getRaw();
-		double getdistance = testEncoder.getDistance();
-		double rate = testEncoder.getRate();
-		boolean direction = testEncoder.getDirection();
-		boolean stopped = testEncoder.getStopped();
-		
-		System.out.println(getdistance);*/	
-		
-		
-		/*testEncoder.reset();
-		double length = testEncoder.getDistance();
-		double dist = testEncoder.getDistancePerPulse();
-		System.out.println(dist);
-		
-		while (length <= 1)	{
-			leftMotor1.set(ControlMode.PercentOutput, .5);
-			System.out.println(length);
-		}
-		leftMotor1.set(ControlMode.PercentOutput, 0);
-		*/
+		rightMotor1.set(ControlMode.PercentOutput, -.5);
+		int count = testEncoder.get();
+		double distance = count * .0184;
+		//double distance = testEncoder.getDistance();
+		System.out.println(distance);
 		
 	}
-		/*int automode = 1; //which auto case we r gonna run
-		double waitTime = 0.1; //the wait time for each action
-		String gameData;
-		gameData = DriverStation.getInstance().getGameSpecificMessage();
-		switch(automode) {
-		case 1: //right side
-			   if(gameData.charAt(0) == 'R'){
-			       moveOnYAxis(100);
-			       Timer.delay(waitTime);
-			       turn90(-90);
-			       Timer.delay(waitTime);
-			       moveOnYAxis(50);
-			       Timer.delay(waitTime);
-			       break;
-			   } else if(gameData.charAt(0) == 'R') {
-				   moveOnYAxis(200);
-			       Timer.delay(2*waitTime);
-			       turn90(-90);
-			       Timer.delay(waitTime);
-			       moveOnYAxis(50);
-			       Timer.delay(waitTime);
-			       break;
-			   }
-			   else {
-				   moveOnYAxis(255);
-			       Timer.delay(3*waitTime);
-			       turn90(-90);
-			       Timer.delay(waitTime);
-			       moveOnYAxis(50);
-			       Timer.delay(waitTime);
-			       break;
-			   }
-		case 2: //middle
-			   if(gameData.charAt(0) == 'R') {
-				   moveOnYAxis(100);
-				   Timer.delay(waitTime);
-				   turn45(45);
-				   moveOnYAxis(100);
-				   Timer.delay(2/waitTime);
-				   break;
-			   } else {
-				   moveOnYAxis(100);
-				   Timer.delay(waitTime);
-				   turn45(-45);
-				   moveOnYAxis(100);
-				   Timer.delay(2/waitTime);
-				   break;
-			   }
-		case 3:
-			   if(gameData.charAt(0) == 'L'){
-			       moveOnYAxis(100);
-			       Timer.delay(waitTime);
-			       turn90(90);
-			       Timer.delay(waitTime);
-			       moveOnYAxis(50);
-			       Timer.delay(waitTime);
-			       break;
-			   } else if(gameData.charAt(0) == 'L') {
-				   moveOnYAxis(200);
-			       Timer.delay(2*waitTime);
-			       turn90(90);
-			       Timer.delay(waitTime);
-			       moveOnYAxis(50);
-			       Timer.delay(waitTime);
-			       break;
-			   }
-			   else {
-				   moveOnYAxis(255);
-			       Timer.delay(3*waitTime);
-			       turn90(90);
-			       Timer.delay(waitTime);
-			       moveOnYAxis(50);
-			       Timer.delay(waitTime);
-			       break;
-			   }
-		}
-	}	
-
-	*/
-	/**
-	 * This function is called once each time the robot enters teleoperated mode.
-	 */
+		
 	@Override
 	public void teleopInit() {
 	}
@@ -286,6 +150,8 @@ public class Robot extends IterativeRobot {
 		leftMotor2.set(ControlMode.PercentOutput, leftJoy.getY());
 		rightMotor1.set(ControlMode.PercentOutput, -1 * rightJoy.getY());
 		rightMotor2.set(ControlMode.PercentOutput, -1 * rightJoy.getY());
+		leftElevatorMotor.set(ControlMode.PercentOutput, operator.getY());
+		//rightElevatorMotor.set(ControlMode.PercentOutput, -1*operator.getY());
 		compressor.setClosedLoopControl(true);
 		compressor.start();
 		double x = 0;
@@ -294,34 +160,58 @@ public class Robot extends IterativeRobot {
 		//NetworkTableEntry yValue = NetworkTableEntry.setDouble(y);
 		//in and out for two cylinders using button 2
 		
-		if(leftJoy.getRawButton(3)) {
+		/*if(leftJoy.getRawButton(3)) {
 			Solenoid3.set(false);
 		} else {
 			Solenoid3.set(true);
-		}
-		if(leftJoy.getRawButton(4)) {
+		}*/
+		/*if(leftJoy.getRawButton(4)) {
 			Solenoid4.set(false);
 		} else {
 			Solenoid4.set(true);
-		}
-		if(leftJoy.getRawButton(4)) {
+		}*/
+		/*if(leftJoy.getRawButton(4)) {
 			Solenoid5.set(false);
 		} else {
 			Solenoid5.set(true);
-		}
+		}*/
 		if (rightJoy.getRawButton(2)) {
-			if (lowgear) {
+			if (lowgear == true) {
 				Solenoid2.set(true);
-				Solenoid1.set(false);
+				Solenoid1.set(true);
 				lowgear = false;
+				Timer.delay(.001);
 			} else {
 				Solenoid2.set(false);
-				Solenoid1.set(true);
+				Solenoid1.set(false);
 				lowgear = true;
+				Timer.delay(.001);
 			}
-			Timer.delay(.2);	
 		}
-		
+		if (rightJoy.getRawButton(1)) {
+			if(clamped == false) {
+				Solenoid0.set(true);
+				clamped = true;
+				Timer.delay(.001);
+			}
+			else {
+				Solenoid0.set(false);
+				clamped = false;
+				Timer.delay(.001);
+			}
+		} 
+		if (rightJoy.getRawButton(3)) {
+			if(extended == false) {
+				Solenoid3.set(true);
+				extended = true;
+				Timer.delay(.001);
+			}
+			else {
+				Solenoid3.set(false);
+				extended = false;
+				Timer.delay(.001);
+			}
+		}
 		//while(isOperatorControl() && isEnabled()) {
 			
 			
