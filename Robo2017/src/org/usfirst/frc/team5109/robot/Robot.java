@@ -49,7 +49,7 @@ public class Robot extends IterativeRobot {
 	boolean clamped = false;
 	Solenoid Solenoid3 = new Solenoid(3);
 	boolean extended = false;
-	
+	double inityaw = NetworkTable.getTable("imutable");
 	Solenoid Solenoid5 = new Solenoid(5);
 	//Solenoids for gear shifting
 	Solenoid Solenoid4 = new Solenoid(4);//1
@@ -110,7 +110,16 @@ public class Robot extends IterativeRobot {
 		//c.setClosedLoopControl(true);
 		//c.setClosedLoopControl(false);
 		
-		
+	double yaw = NetworkTable.getTable("imutable");
+		if (inityaw == yaw) {
+			System.out.println("Nein");
+		}
+		else {
+			yaw -= inityaw;
+			//use encoders to turn the degrees of difference between each value
+			//difference of degrees would be single digits or max 20 if not recalibrate the IMU
+			//
+		}
 
 	}
 
