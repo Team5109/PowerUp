@@ -12,8 +12,8 @@
 			       moveOnYAxis(50);
 			       Timer.delay(waitTime);
 			       break;
-			   } else if(gameData.charAt(0) == 'R') {
-				   moveOnYAxis(200);
+			   } else if(gameData.charAt(1) == 'R') {
+			        moveOnYAxis(200);
 			       Timer.delay(2*waitTime);
 			       turn90(-90);
 			       Timer.delay(waitTime);
@@ -22,7 +22,7 @@
 			       break;
 			   }
 			   else {
-				   moveOnYAxis(255);
+				moveOnYAxis(255);
 			       Timer.delay(3*waitTime);
 			       turn90(-90);
 			       Timer.delay(waitTime);
@@ -55,7 +55,7 @@
 			       moveOnYAxis(50);
 			       Timer.delay(waitTime);
 			       break;
-			   } else if(gameData.charAt(0) == 'L') {
+			   } else if(gameData.charAt(1) == 'L') {
 				   moveOnYAxis(200);
 			       Timer.delay(2*waitTime);
 			       turn90(90);
