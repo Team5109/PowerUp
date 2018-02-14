@@ -64,7 +64,7 @@
 			       Timer.delay(waitTime);
 			       break;
 			   }
-			   else {
+			   else { //right side
 				   moveOnYAxis(255);
 			       Timer.delay(3*waitTime);
 			       turn90(90);
