@@ -49,16 +49,16 @@ public class Robot extends IterativeRobot {
 	boolean clamped = false;
 	Solenoid Solenoid3 = new Solenoid(3);
 	boolean extended = false;
-	double inityaw = NetworkTable.getTable("imutable");
+	
 	Solenoid Solenoid5 = new Solenoid(5);
 	//Solenoids for gear shifting
 	Solenoid Solenoid4 = new Solenoid(4);//1
 	Compressor compressor;
 	boolean lowgear = false;
-	Encoder testEncoder = new Encoder(0, 1, true); 
+	Encoder leftEncoder = new Encoder(0, 1, false); 
+	Encoder rightEncoder = new Encoder(8, 9, true); 	
 	
-	
-	double length = testEncoder.getDistance();
+	/*double length = testEncoder.getDistance();
 	//double period = testEncoder.getPeriod();
 	
 	boolean direction = testEncoder.getDirection();
@@ -67,7 +67,7 @@ public class Robot extends IterativeRobot {
 	int count = 0;
 	int i = 0;
 	boolean testing = true;
-	
+	*/
 
 
 	//NetworkTable imutable = NetworkTable.getTable("IMU Table");
@@ -86,7 +86,8 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
 		compressor = new Compressor(0);
 		CameraServer.getInstance().startAutomaticCapture();
-	testEncoder.setDistancePerPulse(1);
+		leftEncoder.setDistancePerPulse(1);
+		rightEncoder.setDistancePerPulse(1);
 		/*.0184
 		/*NetworkTableInstance table = NetworkTableInstance.getDefault();
 		NetworkTableInstance instance = NetworkTableInstance.getDefault();
@@ -110,16 +111,7 @@ public class Robot extends IterativeRobot {
 		//c.setClosedLoopControl(true);
 		//c.setClosedLoopControl(false);
 		
-	double yaw = NetworkTable.getTable("imutable");
-		if (inityaw == yaw) {
-			System.out.println("Nein");
-		}
-		else {
-			yaw -= inityaw;
-			//use encoders to turn the degrees of difference between each value
-			//difference of degrees would be single digits or max 20 if not recalibrate the IMU
-			//
-		}
+		
 
 	}
 
@@ -128,20 +120,103 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-	
-		//testEncoder.reset();
+		
+		leftEncoder.reset();
+		rightEncoder.reset();
+		
+		leftMotor1.set(ControlMode.PercentOutput, -0.2);
+		leftMotor2.set(ControlMode.PercentOutput, -0.2);
+		rightMotor1.set(ControlMode.PercentOutput, 0.2);
+		rightMotor2.set(ControlMode.PercentOutput, 0.2);
+
+		
+
 	
 	}
 	/**
 	 * This function is called periodically during autonomous.
 	 */
 	public void autonomousPeriodic() {
-		leftMotor1.set(ControlMode.PercentOutput, .5);
-		rightMotor1.set(ControlMode.PercentOutput, -.5);
-		int count = testEncoder.get();
-		double distance = count * .0184;
-		//double distance = testEncoder.getDistance();
-		System.out.println(distance);
+		double  leftspeed = .2;
+		double rightspeed = .2;
+	
+		/*
+		leftMotor1.set(ControlMode.PercentOutput, -normalspeed);
+		leftMotor2.set(ControlMode.PercentOutput, -normalspeed);
+		rightMotor1.set(ControlMode.PercentOutput, (normalspeed/2));
+		rightMotor2.set(ControlMode.PercentOutput, (normalspeed/2));
+		*/
+		
+		
+		int leftCount = leftEncoder.get();
+		int rightCount = rightEncoder.get();
+		System.out.println("left: " + leftCount);
+		System.out.println("right: " + rightCount);
+		/*
+		double masterPower = 0.1;
+		double slavePower = 0.1;
+		int error = 0;
+		int kp = 25;
+	
+		leftMotor1.set(ControlMode.PercentOutput, -masterPower);
+		leftMotor2.set(ControlMode.PercentOutput, -masterPower);
+		rightMotor1.set(ControlMode.PercentOutput, slavePower);
+		rightMotor2.set(ControlMode.PercentOutput, slavePower);
+		leftEncoder.reset();
+		rightEncoder.reset();
+		error = -leftCount + rightCount;
+		slavePower  = slavePower + (error/kp);
+		Timer.delay(0.1);
+		System.out.println("error:" + error + "slavePower" + slavePower);
+		*/
+		
+		double dstraight = leftCount - rightCount;
+		if (leftCount < 15646) {
+			if ( dstraight ==  0) {
+				
+				leftspeed = leftspeed;
+				rightspeed = rightspeed;
+			}
+			
+			else {
+			if (dstraight >= 1) {
+				rightspeed = rightspeed - 0.02;
+				
+			}
+			else if (dstraight <= -1) {
+				leftspeed = leftspeed + 0.02;
+				
+			}
+			leftMotor1.set(ControlMode.PercentOutput, - leftspeed);
+			leftMotor2.set(ControlMode.PercentOutput, - leftspeed);
+			rightMotor1.set(ControlMode.PercentOutput,  rightspeed);
+			rightMotor2.set(ControlMode.PercentOutput,  rightspeed);
+			
+			}
+			//double distance = testEncoder.getDistance();
+			System.out.println("dstraight: " + dstraight);
+			Timer.delay(0.1);
+		}
+		else {
+			leftMotor1.set(ControlMode.PercentOutput, 0);
+			leftMotor2.set(ControlMode.PercentOutput, 0);
+			rightMotor1.set(ControlMode.PercentOutput, 0);
+			rightMotor2.set(ControlMode.PercentOutput, 0);
+		}
+			/*
+	
+			if (rightCount < (144513.262))
+			{
+				System.out.println(leftCount);
+			}
+			else {
+				leftMotor1.set(ControlMode.PercentOutput, 0);
+				leftMotor2.set(ControlMode.PercentOutput, 0);
+				rightMotor1.set(ControlMode.PercentOutput, 0);
+				rightMotor2.set(ControlMode.PercentOutput, 0);
+			}
+		*/
+
 		
 	}
 		
