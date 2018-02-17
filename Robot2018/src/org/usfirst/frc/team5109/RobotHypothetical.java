@@ -278,7 +278,7 @@ public class Robot extends IterativeRobot {
 		counter = 0;
 		if (right == true) {
 			System.out.println("I have turned right");
-			while (((leftCount - rightCount)*0.5) < 4194.192964 || counter > 100) {			//tests the average of the encoders against 90 degrees, with a failsafe of 10 seconds which is 100 loops
+			while (((leftCount - rightCount)*0.5) < 3020.8983302 || counter > 100) {			//tests the average of the encoders against 90 degrees, with a failsafe of 10 seconds which is 100 loops	|| Joshua's number: 4194.192964 
 				leftMotor1.set(ControlMode.PercentOutput, -motorSpeed);					//turn right by 90 degrees
 				leftMotor2.set(ControlMode.PercentOutput, -motorSpeed);
 				rightMotor1.set(ControlMode.PercentOutput, -motorSpeed);
@@ -294,7 +294,7 @@ public class Robot extends IterativeRobot {
 		}
 		else {
 			System.out.println("I have turned left");
-			while (((rightCount - leftCount)*0.5) < 4194.192964 || counter > 100) {		//tests average of encoders against 90 degrees, failsafe of 10 secons which is 100 loops
+			while (((rightCount - leftCount)*0.5) < 3020.8983302 || counter > 100) {		//tests average of encoders against 90 degrees, failsafe of 10 secons which is 100 loops	|| Joshua's number is 4194.192964
 				leftMotor1.set(ControlMode.PercentOutput, motorSpeed);					//turn left by 90 degrees
 				leftMotor2.set(ControlMode.PercentOutput, motorSpeed);
 				rightMotor1.set(ControlMode.PercentOutput, motorSpeed);
