@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.networktables.*;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Encoder;
@@ -59,14 +58,13 @@ public class Robot extends IterativeRobot {
 	Encoder rightEncoder = new Encoder(0, 1, false); 
 	Encoder leftEncoder = new Encoder(8, 9, false);
 	double motorSpeed = 0.1;//Motorspeed is used for auto start and the starting speed driveStraight method goes, turn it negative for leftMotor to go straight
-
-	//NetworkTable imutable = NetworkTable.getTable("IMU Table");
-
- 
-
+	int counter = 0;
 	
-
-
+	NetworkTableInstance inst = NetworkTableInstance.getDefault();
+	NetworkTable imutable;
+	double roboRoll = (imutable.getEntry("roll").getDouble(0));
+	double roboPitch = (imutable.getEntry("pitch").getDouble(0));
+	double roboYaw = (imutable.getEntry("yaw").getDouble(0));
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -78,29 +76,7 @@ public class Robot extends IterativeRobot {
 		CameraServer.getInstance().startAutomaticCapture();
 		leftEncoder.setDistancePerPulse(1);
 		rightEncoder.setDistancePerPulse(1);
-		/*.0184
-		/*NetworkTableInstance table = NetworkTableInstance.getDefault();
-		NetworkTableInstance instance = NetworkTableInstance.getDefault();
-		NetworkTable rootTable = instance.getTable("");
-		System.out.println(rootTable);
-		double[] defaultValue = new double[0];
-		while(true) {
-			double[] areas = table.getNumberArray("area",defaultValue);
-			for(double area : areas) {
-				System.out.println(area + " ");
-			}
-			System.out.println();
-			Timer.delay(1);
-		} */
-		//NetworkTable imutable = NetworkTable.getSubTable("IMU Table");
-		//System.out.println(imutable.getEntry("roll"));
-	    //System.out.println(imutable.getEntry("pitch"));
-	    //System.out.println(imutable.getEntry("yaw"));
-		//exampleSolenoid.set(true);
-		//exampleSolenoid.set(false);
-		//c.setClosedLoopControl(true);
-		//c.setClosedLoopControl(false);
-		
+		// .0184
 		
 
 	}
@@ -207,9 +183,36 @@ public class Robot extends IterativeRobot {
 				Timer.delay(.001);
 			}
 		}
+		// Anti-tilt test code
+		if (roboPitch <= -12) {
+			while (roboPitch <= 8) {
+				leftMotor1.set(ControlMode.PercentOutput, .5);
+				leftMotor2.set(ControlMode.PercentOutput, .5);
+				rightMotor1.set(ControlMode.PercentOutput, -.5);
+				rightMotor2.set(ControlMode.PercentOutput, -.5);
+			}
+			leftMotor1.set(ControlMode.PercentOutput, 0);
+			leftMotor2.set(ControlMode.PercentOutput, 0);
+			rightMotor1.set(ControlMode.PercentOutput, 0);
+			rightMotor2.set(ControlMode.PercentOutput, 0);
+		} else if (roboPitch >= 12) {
+			while (roboPitch >= 8) {
+				leftMotor1.set(ControlMode.PercentOutput, -.5);
+				leftMotor2.set(ControlMode.PercentOutput, -.5);
+				rightMotor1.set(ControlMode.PercentOutput, .5);
+				rightMotor2.set(ControlMode.PercentOutput, .5);
+			}
+			leftMotor1.set(ControlMode.PercentOutput, 0);
+			leftMotor2.set(ControlMode.PercentOutput, 0);
+			rightMotor1.set(ControlMode.PercentOutput, 0);
+			rightMotor2.set(ControlMode.PercentOutput, 0);
+		}
+		
+		
+		
 		//while(isOperatorControl() && isEnabled()) {
 			
-			
+		
 		//}
 	}
 
@@ -234,18 +237,23 @@ public class Robot extends IterativeRobot {
 		double averageCount = (leftCount + rightCount) * 0.5; 	//Find the distance the robot has gone 
 		double distancePulse = distanceFeet * 1564.556753; 	//Convert the feet the user wants to go into encoder pulses 
 		double dstraight = leftCount - rightCount; //Find the distance difference between the left and right sides 
+		counter = 0;
 		//Conditionals to determine whether to slow down the left or right sides to correct errors in driving straight and when to stop
-		while (averageCount < distancePulse) {
+		leftMotor1.set(ControlMode.PercentOutput, - leftspeed);
+		leftMotor2.set(ControlMode.PercentOutput, - leftspeed);
+		rightMotor1.set(ControlMode.PercentOutput,  rightspeed);
+		rightMotor2.set(ControlMode.PercentOutput,  rightspeed);
+		while (averageCount < distancePulse || counter > 150) {
 			leftCount = leftEncoder.get();
 			rightCount = rightEncoder.get();
 			averageCount = (leftCount + rightCount) * 0.5;
-			System.out.println("left: " + leftCount);
+			System.out.println("left: " + leftCount);									//Print out your encoder values
 			System.out.println("right: " + rightCount);
-			dstraight = leftCount - rightCount;
+			dstraight = leftCount - rightCount;											//dstraight is the difference of encoder values. Depending on value, used to know whether motors are ahead or behind.
 			if ( dstraight ==  0) {
 				;
 			}
-			else if (dstraight >= 1) {
+			else if (dstraight >= 1) {													//change motor speed to straighten out bot
 				rightspeed = rightspeed - 0.02;
 			}
 			else if (dstraight <= -1) {
@@ -257,40 +265,95 @@ public class Robot extends IterativeRobot {
 			rightMotor2.set(ControlMode.PercentOutput,  rightspeed);
 			System.out.println("dstraight: " + dstraight);
 			Timer.delay(0.1);
-			}
+			counter += 1; 
+			
+		}
 		stopMotors();
 		System.out.println(distanceFeet + ":feet has passed");
+		System.out.println(counter);
+		counter = 0;
 	}
+	
 	//true is turn 90 right, false is turn 90 left
 	public void turn90 (boolean right) {
 		int leftCount = leftEncoder.get(); 
 		int rightCount = rightEncoder.get();
+		counter = 0;
 		if (right == true) {
 			System.out.println("I have turned right");
-			while (((leftCount - rightCount)*0.5) < 50701.06217) {
+			while (((leftCount - rightCount)*0.5) < 3020.8983302 || counter > 100) {			//tests the average of the encoders against 90 degrees, with a failsafe of 10 seconds which is 100 loops	|| Joshua's number: 4194.192964 
+				leftMotor1.set(ControlMode.PercentOutput, -motorSpeed);					//turn right by 90 degrees
+				leftMotor2.set(ControlMode.PercentOutput, -motorSpeed);
+				rightMotor1.set(ControlMode.PercentOutput, -motorSpeed);
+				rightMotor2.set(ControlMode.PercentOutput, -motorSpeed); 
+				leftCount = leftEncoder.get(); 											//updates encoder values
+				rightCount = rightEncoder.get();
+				Timer.delay(0.1);
+				counter += 1;
+				}
+			stopMotors();
+			System.out.println(counter);
+			counter = 0;
+		}
+		else {
+			System.out.println("I have turned left");
+			while (((rightCount - leftCount)*0.5) < 3020.8983302 || counter > 100) {		//tests average of encoders against 90 degrees, failsafe of 10 secons which is 100 loops	|| Joshua's number is 4194.192964
+				leftMotor1.set(ControlMode.PercentOutput, motorSpeed);					//turn left by 90 degrees
+				leftMotor2.set(ControlMode.PercentOutput, motorSpeed);
+				rightMotor1.set(ControlMode.PercentOutput, motorSpeed);
+				rightMotor2.set(ControlMode.PercentOutput, motorSpeed); 
+				leftCount = leftEncoder.get(); 											//update encoder vaules
+				rightCount = rightEncoder.get();
+				Timer.delay(0.1);
+				counter += 1;
+			}
+			stopMotors();
+			System.out.println(counter);												//print value of counter to know how many cycles needed
+			counter = 0;																//reset counter
+		}
+		
+	}
+	/*public void turnDegreesRight (double turnDegree) {
+		int leftCount = leftEncoder.get(); 
+		int rightCount = rightEncoder.get();
+		counter = 0;
+		double turnRevised = turnDegree/360;
+		double turnRevisedInPulses = turnRevised * 
+			while (((leftCount - rightCount)*0.5) < turnRevisedInPulses || counter > 100) {			//tests for the average value of encoders and if they are below the required value, failsafe ending at 100 loops
 				leftMotor1.set(ControlMode.PercentOutput, -motorSpeed);
 				leftMotor2.set(ControlMode.PercentOutput, -motorSpeed);
 				rightMotor1.set(ControlMode.PercentOutput, -motorSpeed);
 				rightMotor2.set(ControlMode.PercentOutput, -motorSpeed); 
 				leftCount = leftEncoder.get(); 
 				rightCount = rightEncoder.get();
+				Timer.delay(0.1);
+				counter += 1;
 				}
 			stopMotors();
+			System.out.println(counter);
+			counter = 0;
 		}
-		else {
-			System.out.println("I have turned left");
-			while (((rightCount - leftCount)*0.5) < 50701.06217) {
+	public void turnDegreesLeft (double turnDegree) {
+		int leftCount = leftEncoder.get(); 
+		int rightCount = rightEncoder.get();
+		counter = 0;
+		double turnRevised = turnDegree/360;
+		double turnRevisedInPulses = turnRevised * 
+			while (((rightCount - leftCount)*0.5) < turnRevisedInPulses || counter > 100) {
 				leftMotor1.set(ControlMode.PercentOutput, motorSpeed);
 				leftMotor2.set(ControlMode.PercentOutput, motorSpeed);
 				rightMotor1.set(ControlMode.PercentOutput, motorSpeed);
 				rightMotor2.set(ControlMode.PercentOutput, motorSpeed); 
 				leftCount = leftEncoder.get(); 
 				rightCount = rightEncoder.get();
-			}
+				Timer.delay(0.1);
+				counter += 1;
+				}
 			stopMotors();
+			System.out.println(counter);
+			counter = 0;
 		}
-		
-	}
+		*/
 	//Only use stopMotors to end a auto Method most of the time
 	public void stopMotors () {
 		leftMotor1.set(ControlMode.PercentOutput, 0);
@@ -303,6 +366,7 @@ public class Robot extends IterativeRobot {
 	public void goBackwards(double distanceFeet) {
 		int leftCount = leftEncoder.get();
 		int rightCount = rightEncoder.get();
+		counter = 0;
 		System.out.println("left: " + leftCount);
 		System.out.println("right: " + rightCount);
 		double leftspeed = motorSpeed; //motorSpeed is declared at the stop, Changes the motors to go at that speed 
@@ -313,7 +377,11 @@ public class Robot extends IterativeRobot {
 		double distancePulse = distanceFeet * 1564.556753; 	//Convert the feet the user wants to go into encoder pulses 
 		double dstraight = leftCount + rightCount; //Find the distance difference between the left and right sides 
 		//Conditionals to determine whether to slow down the left or right sides to correct errors in driving straight and when to stop
-		while (averageCount < distancePulse) {
+		leftMotor1.set(ControlMode.PercentOutput, leftspeed);
+		leftMotor2.set(ControlMode.PercentOutput, leftspeed);
+		rightMotor1.set(ControlMode.PercentOutput, - rightspeed);
+		rightMotor2.set(ControlMode.PercentOutput, - rightspeed);
+		while (averageCount < distancePulse || counter > 100) {
 			leftCount = leftEncoder.get();
 			rightCount = rightEncoder.get();
 			averageCount = -(leftCount + rightCount) * 0.5;
@@ -333,9 +401,12 @@ public class Robot extends IterativeRobot {
 			rightMotor2.set(ControlMode.PercentOutput, - rightspeed);
 			System.out.println("dstraight: " + dstraight);
 			Timer.delay(0.1);
+			counter += 1;
 		}
 		stopMotors();
 		System.out.println(distanceFeet + ":feet has passed");
+		System.out.println(counter);
+		counter = 0;
 	}
 	public void Clamp(boolean clampBoolean) {
 		if(clampBoolean == true) {
@@ -363,10 +434,29 @@ public class Robot extends IterativeRobot {
 		rightElevatorMotor.set(ControlMode.PercentOutput, -1*operator.getY());
 		
 	}
+	public void tipTest(double imuPitch) {					
+		double tipPoint = 0;								//the value at when the robot will tip
+		double speedChange = 0;								//the speed the motor will change to so it doesn't fall
+		if(imuPitch > tipPoint) {
+			leftMotor1.set(ControlMode.PercentOutput, speedChange);
+			leftMotor2.set(ControlMode.PercentOutput, speedChange);
+			rightMotor1.set(ControlMode.PercentOutput, speedChange);
+			rightMotor2.set(ControlMode.PercentOutput, speedChange);
+		}
+	}
 	
 	@Override
-	public void testPeriodic() {
+	
+	public void testInit() {
+		imutable = inst.getTable("IMU Table");
+		System.out.println(imutable.getKeys());
+	}
 		
+	public void testPeriodic() {
+		// prints the values from the NetworkTable
+		System.out.println(imutable.getEntry("yaw").getDouble(0));
+		System.out.println(imutable.getEntry("pitch").getDouble(0));
+		System.out.println(imutable.getEntry("roll").getDouble(0));	
 	}
 }
 
