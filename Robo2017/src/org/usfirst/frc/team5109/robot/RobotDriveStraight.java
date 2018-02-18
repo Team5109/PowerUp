@@ -79,7 +79,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		compressor = new Compressor(0);
+	   compressor = new Compressor(0);
 		CameraServer.getInstance().startAutomaticCapture();
 		leftEncoder.setDistancePerPulse(1);
 		rightEncoder.setDistancePerPulse(1);
@@ -175,8 +175,8 @@ public class Robot extends IterativeRobot {
 		*/
 		
 		double dstraight = leftCount - rightCount;
-		double averageCount = (leftCount + rightCount) * 0.5;
-		if (rightCount < 7823) {
+		
+		if (rightCount <= 7200) {
 			if ( dstraight ==  0) {
 			}
 			
@@ -199,8 +199,33 @@ public class Robot extends IterativeRobot {
 			System.out.println("dstraight: " + dstraight);
 			Timer.delay(0.01);
 		}
-		else {
+		else if((rightCount <= 7820) && (rightCount >= 7200)) {
+			rightspeed = rightspeed - .35;
+			leftspeed = leftspeed - .35;
+			if ( dstraight ==  0) {
+			}
+			
+			else {
+			if (dstraight >= 1) {
+				rightspeed = rightspeed - 0.01;
+				
+			}
+			else if (dstraight <= -1) {
+				leftspeed = leftspeed - 0.01;
+				
+			}
+			leftMotor1.set(ControlMode.PercentOutput, leftspeed);
+			leftMotor2.set(ControlMode.PercentOutput, leftspeed);
+			rightMotor1.set(ControlMode.PercentOutput, - rightspeed);
+			rightMotor2.set(ControlMode.PercentOutput, - rightspeed);
+			
+			}
 
+			System.out.println("dstraight: " + dstraight);
+			Timer.delay(0.01);
+		}
+		
+		else {
 			leftMotor1.set(ControlMode.PercentOutput, 0);
 			leftMotor2.set(ControlMode.PercentOutput, 0);
 			rightMotor1.set(ControlMode.PercentOutput, 0);
@@ -225,6 +250,8 @@ public class Robot extends IterativeRobot {
 		
 	@Override
 	public void teleopInit() {
+		leftEncoder.reset();
+		rightEncoder.reset();
 	}
 
 	/**
@@ -232,7 +259,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		compressor = new Compressor(0);
+	compressor = new Compressor(0);
 		leftMotor1.set(ControlMode.PercentOutput, -1 * leftJoy.getY());
 		leftMotor2.set(ControlMode.PercentOutput, -1 * leftJoy.getY());
 		rightMotor1.set(ControlMode.PercentOutput,  rightJoy.getY());
