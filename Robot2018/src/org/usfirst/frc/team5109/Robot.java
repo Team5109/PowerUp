@@ -98,8 +98,8 @@ public class Robot extends IterativeRobot {
 		leftMotor2.set(ControlMode.PercentOutput, 0.4);
 		rightMotor1.set(ControlMode.PercentOutput, - 0.4);
 		rightMotor2.set(ControlMode.PercentOutput, - 0.4); //end of progressive increase
-		Solenoid0.set(true); //clamp the box
-		clamped = true;
+		Solenoid0.set(true); //clamp the box first
+		clamped = true; //set the clamp checker to true as we are clamped
 
 	}
 	/**
@@ -109,12 +109,12 @@ public class Robot extends IterativeRobot {
 		int automode = 1; //1 = LEFT, 2 = MIDDLE 3 = RIGHT
 		String gameData; //this get the "LLR" string from the FMS
 		gameData = DriverStation.getInstance().getGameSpecificMessage();
-		Timer.delay(.2);
+		Timer.delay(.2); //wait to make sure we get the full string
 		switch(automode) {
 		case 1: //left side
 			   if(gameData.charAt(0) == 'L'){ //if the first character in the 3 string which is our switch is L then 
 				   driveStraightForward(); //drive forward into the switch
-				   Timer.delay(1);
+				   Timer.delay(1); //wait for full forward drive
 				   Solenoid3.set(true); //extent the service module
 				   extended = true; //make the checker true as it is extended
 				   Timer.delay(.4); //wait until the intake is fully ejected
@@ -157,24 +157,24 @@ public class Robot extends IterativeRobot {
 	}
 		
 	@Override
-	public void teleopInit() { //
-		leftEncoder.reset();
-		rightEncoder.reset();
+	public void teleopInit() { //when teleop starts
+		leftEncoder.reset(); //reset the left encoder to get accurate encoder values
+		rightEncoder.reset(); //reset the right encoder to get accurate encoder values
 	}
 
 	/**
 	 * This function is called periodically during teleoperated mode.
 	 */
 	@Override
-	public void teleopPeriodic() {
-	compressor = new Compressor(0);
-		leftMotor1.set(ControlMode.PercentOutput, -1 * leftJoy.getY());
-		leftMotor2.set(ControlMode.PercentOutput, -1 * leftJoy.getY());
-		rightMotor1.set(ControlMode.PercentOutput,  rightJoy.getY());
-		rightMotor2.set(ControlMode.PercentOutput,  rightJoy.getY());
-		leftElevatorMotor.set(ControlMode.PercentOutput, operator.getY());
-		rightElevatorMotor.set(ControlMode.PercentOutput, (-1 *operator.getY()));
-		int leftCount = leftEncoder.get();
+	public void teleopPeriodic() { 
+		compressor = new Compressor(0); //have the compressor associate with the only compressor
+		leftMotor1.set(ControlMode.PercentOutput, -1 * leftJoy.getY()); //driver controls, invert the controls because the motors are flipped
+		leftMotor2.set(ControlMode.PercentOutput, -1 * leftJoy.getY());//driver controls, invert the controls because the motors are flipped
+		rightMotor1.set(ControlMode.PercentOutput,  rightJoy.getY()); //driver controls
+		rightMotor2.set(ControlMode.PercentOutput,  rightJoy.getY()); //driver controls
+		leftElevatorMotor.set(ControlMode.PercentOutput, operator.getY()); //set the left elevator to the operator joystick y axis
+		rightElevatorMotor.set(ControlMode.PercentOutput, (-1 *operator.getY()));//set the right elevator motor to joystick y axis and invert bc the motor is flipped
+		int leftCount = leftEncoder.get(); //set the left count to a live feed 
 		int rightCount = rightEncoder.get();
 		System.out.println("right: " + rightCount);
 		System.out.println("left: " + leftCount);
