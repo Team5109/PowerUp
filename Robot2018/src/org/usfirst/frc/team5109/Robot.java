@@ -1,8 +1,8 @@
 
-package org.usfirst.frc.team5109.robot;
+package org.usfirst.frc.team5109.robot; //import the framework to make everything work
 
 
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.*; //all of our imports, if you see an issue press the + 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,102 +30,55 @@ import edu.wpi.first.wpilibj.DriverStation;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	TalonSRX rightMotor1 =  new TalonSRX(6);
-	TalonSRX rightMotor2 =  new TalonSRX(10);
-	TalonSRX leftMotor1 =  new TalonSRX(5);//10
-	TalonSRX leftMotor2 =  new TalonSRX(4);//10
-	TalonSRX rightElevatorMotor = new TalonSRX(2);
-	TalonSRX leftElevatorMotor = new TalonSRX(1);
-	TalonSRX intakeBags = new TalonSRX(8);
-	TalonSRX scalar = new TalonSRX(0);
-	Joystick leftJoy = new Joystick(0);
-	Joystick rightJoy = new Joystick(1);
-	Joystick operator = new Joystick(2);
+	TalonSRX rightMotor1 =  new TalonSRX(6); //make the talon of rightmotor1 associate with the talon with ID 6
+	TalonSRX rightMotor2 =  new TalonSRX(10); //make the talon of rightmotor2 associate with the talon with ID 10
+	TalonSRX leftMotor1 =  new TalonSRX(5);//make the talon of leftmotor1 associate with the talon with ID 5
+	TalonSRX leftMotor2 =  new TalonSRX(4);//make the talon of leftmotor2 associate with the talon with ID 4
+	TalonSRX rightElevatorMotor = new TalonSRX(2); //make the talon of rightElevatorMotor associate with the talon with ID 2
+	TalonSRX leftElevatorMotor = new TalonSRX(1);//make the talon of leftElevatorMotor associate with the talon with ID 1
+	TalonSRX intakeBags = new TalonSRX(8);//make the talon of intakeBags associate with the talon with ID 8
+	TalonSRX scalar = new TalonSRX(0); //make the talon of scalar associate with the talon with ID 0
+	Joystick leftJoy = new Joystick(0); //make the leftJoy Joystick be the first joystick plugged in (order is from the laptop edge to the screen)
+	Joystick rightJoy = new Joystick(1); //make the rightJoy Joystick be the second joystick plugged in
+	Joystick operator = new Joystick(2); //make the operator Joystick be the third joystick plugged in
 	// Solenoids for gear shifting
-	Solenoid Solenoid2 = new Solenoid(2);//1
-	Solenoid Solenoid1 = new Solenoid(1);
-	// Anand's Solenoids, 0 is used for clamping, 3 is used for extending
-	Solenoid Solenoid0 = new Solenoid(0);
-	boolean clamped = false;
-	Solenoid Solenoid3 = new Solenoid(3);
-	boolean extended = false;
-	boolean spinningBags = false;
+	Solenoid Solenoid2 = new Solenoid(2);//make the solenoid2 (Pneumatic) associate with the third solenoid on the PCM
+	Solenoid Solenoid1 = new Solenoid(1);//make the solenoid1 (Pneumatic)associate with the second solenoid on the PCM
+	//0 is used for clamping, 3 is used for extending
+	Solenoid Solenoid0 = new Solenoid(0); //make the solenoid0 (Pneumatic) associate with the first soleniod on the PCM
+	boolean clamped = false; //set the boolean of clamped that tells if the intake is clamped
+	Solenoid Solenoid3 = new Solenoid(3); //make the solenoid3 (Pneumatic) associate with the fourth soleniod on the PCM
+	boolean extended = false; //set the boolean of extended that tells if the intake is extended
+	boolean spinningBags = false; //set the boolean of spinningBags that tells if the intake motors are spinning
 	
-	Solenoid Solenoid5 = new Solenoid(5);
+	Solenoid Solenoid5 = new Solenoid(5); //make the solenoid5 (Pneumatic) associate with the sixth solenoid on the PCM
 	//Solenoids for gear shifting
-	Solenoid Solenoid4 = new Solenoid(4);//1
-	Compressor compressor;
-	boolean lowgear = false;
-	Encoder rightEncoder = new Encoder(0, 1, true); 
-	Encoder leftEncoder = new Encoder(8, 9, false); 	
-	
-	/*double length = testEncoder.getDistance();
-	//double period = testEncoder.getPeriod();
-	
-	boolean direction = testEncoder.getDirection();
-	boolean stopped = testEncoder.getStopped();
-	//For the encoder do not move 
-	int count = 0;
-	int i = 0;
-	boolean testing = true;
-	*/
-
-
-	//NetworkTable imutable = NetworkTable.getTable("IMU Table");
-
- 
-
-	
-
-
-	
+	Solenoid Solenoid4 = new Solenoid(4);//make the solenoid4 (Pneumatic) associate with the fifth solenoid on the PCM
+	Compressor compressor; //instatiate the compressor
+	boolean lowgear = false; //make a boolean of lowgear to see if we are in low gear and if not its in high gear
+	Encoder rightEncoder = new Encoder(0, 1, true); //create an encoder that maps to the port plugins of 0 and 1 and set it to true to make it turn right to get positive values
+	Encoder leftEncoder = new Encoder(8, 9, false); //create an encoder that maps to the port plugins of 8 and 9 and set it to true to make it turn left to get positive values
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
 	@Override
 	public void robotInit() {
-	   compressor = new Compressor(0);
-		CameraServer.getInstance().startAutomaticCapture();
-		leftEncoder.setDistancePerPulse(1);
-		rightEncoder.setDistancePerPulse(1);
-		/*.0184
-		/*NetworkTableInstance table = NetworkTableInstance.getDefault();
-		NetworkTableInstance instance = NetworkTableInstance.getDefault();
-		NetworkTable rootTable = instance.getTable("");
-		System.out.println(rootTable);
-		double[] defaultValue = new double[0];
-		while(true) {
-			double[] areas = table.getNumberArray("area",defaultValue);
-			for(double area : areas) {
-				System.out.println(area + " ");
-			}
-			System.out.println();
-			Timer.delay(1);
-		} */
-		//NetworkTable imutable = NetworkTable.getSubTable("IMU Table");
-		//System.out.println(imutable.getEntry("roll"));
-	    //System.out.println(imutable.getEntry("pitch"));
-	    //System.out.println(imutable.getEntry("yaw"));
-		//exampleSolenoid.set(true);
-		//exampleSolenoid.set(false);
-		//c.setClosedLoopControl(true);
-		//c.setClosedLoopControl(false);
-		
-		
-
+	   compressor = new Compressor(0); //set the compressor to associate with the first and only compressor
+		CameraServer.getInstance().startAutomaticCapture(); //get camera into driver station
+		leftEncoder.setDistancePerPulse(1); //make the left encoder pulses per distance one to get accurate values
+		rightEncoder.setDistancePerPulse(1); //make the right encoder pulses per distance one to get accurate values
 	}
-
 	/**
 	 * This function is run once each time the robot enters autonomous mode.
 	 */
 	@Override
 	public void autonomousInit() {
 		
-		leftEncoder.reset();
-		rightEncoder.reset();
+		leftEncoder.reset(); //reset the values of the encoder
+		rightEncoder.reset();//reset the values of the encoder
 		
-		leftMotor1.set(ControlMode.PercentOutput, 0.05);
+		leftMotor1.set(ControlMode.PercentOutput, 0.05); //progressive speed increase to not rock the bot 
 		leftMotor2.set(ControlMode.PercentOutput, 0.05);
 		rightMotor1.set(ControlMode.PercentOutput, - 0.05);
 		rightMotor2.set(ControlMode.PercentOutput, - 0.05);
@@ -144,114 +97,67 @@ public class Robot extends IterativeRobot {
 		leftMotor1.set(ControlMode.PercentOutput, 0.4);
 		leftMotor2.set(ControlMode.PercentOutput, 0.4);
 		rightMotor1.set(ControlMode.PercentOutput, - 0.4);
-		rightMotor2.set(ControlMode.PercentOutput, - 0.4); 
-		
+		rightMotor2.set(ControlMode.PercentOutput, - 0.4); //end of progressive increase
+		Solenoid0.set(true); //clamp the box
+		clamped = true;
 
 	}
 	/**
 	 * This function is called periodically during autonomous.
 	 */
 	public void autonomousPeriodic() {
-		/*
-		leftMotor1.set(ControlMode.PercentOutput, -normalspeed);
-		leftMotor2.set(ControlMode.PercentOutput, -normalspeed);
-		rightMotor1.set(ControlMode.PercentOutput, (normalspeed/2));
-		rightMotor2.set(ControlMode.PercentOutput, (normalspeed/2));
-		*/
 		int automode = 1; //1 = LEFT, 2 = MIDDLE 3 = RIGHT
-		String gameData;
+		String gameData; //this get the "LLR" string from the FMS
 		gameData = DriverStation.getInstance().getGameSpecificMessage();
+		Timer.delay(.2);
 		switch(automode) {
 		case 1: //left side
-			   if(gameData.charAt(0) == 'L'){
-				   driveStraightForward();
-				   Solenoid3.set(true);
-				   clamped = true;
-				   Solenoid0.set(true);
-				   extended = true;
+			   if(gameData.charAt(0) == 'L'){ //if the first character in the 3 string which is our switch is L then 
+				   driveStraightForward(); //drive forward into the switch
+				   Timer.delay(1);
+				   Solenoid3.set(true); //extent the service module
+				   extended = true; //make the checker true as it is extended
+				   Timer.delay(.4); //wait until the intake is fully ejected
+				   Solenoid0.set(false); //declamp the box
+				   clamped = false; //set the checker to false as we are no longer clamped
 			   }
-			   /*else if(gameData.charAt(1) == 'L') { //does not work but if we go for scale then move elevator up and release
+			   else if(gameData.charAt(1) == 'L') { //does not work but if we go for scale then move elevator up and release
 				   driveStraightForward();
-				   driveStraightForward();
+				   driveStraightForward(); //drive to switch
 				   //raise elevator
-				   Solenoid3.set(true);
-				   clamped = true;
-				   Solenoid0.set(true);
-				   extended = true;
+				   Solenoid0.set(false); //extent the service module
+				   extended = true; //make the checker true as it is extended
+				   Timer.delay(2); //wait until the intake is fully ejected
+				   Solenoid3.set(true); //declamp the box
+				   clamped = false; //set the checker to false as we are no longer clamped
 			   }
 			   else { //goes to other switch
+				   driveStraightForward(); //drive to other switch
 				   driveStraightForward();
 				   driveStraightForward();
-				   driveStraightForward();
-			   }*/
+			   }
 		case 2: //middle (requires that you line up with the switch
-			   if(gameData.charAt(0) == 'R') {
+			   if(gameData.charAt(0) == 'R') { //if switch is on the right side
 				   driveStraightForward(); //go to switch on our side and drop
 			   } else {
 				   driveStraightForward(); //got to the other switch and drop
 			   }
 		case 3://right side
-			   if(gameData.charAt(0) == 'R'){
-				   driveStraightForward();
-				   driveStraightForward();
-				   Solenoid3.set(true);
-				   clamped = true;
-				   Solenoid0.set(true);
-				   extended = true;
+			   if(gameData.charAt(0) == 'R'){ //if the switch is on our side
+				   driveStraightForward(); //go to switch
+				   Solenoid0.set(true); //extent the service module
+				   extended = true; //make the checker true as it is extended
+				   Timer.delay(2); //wait until the intake is fully ejected
+				   Solenoid3.set(true); //declamp the box
+				   clamped = false; //set the checker to false as we are no longer clamped
 			   } 
-			   /*else if(gameData.charAt(1) == 'R') { //go to switch and drop (need to raise elevator)
-				   driveStraightForward();
-				   driveStraightForward();
-				   //raise elevator
-				   Solenoid3.set(true);
-				   clamped = true;
-				   Solenoid0.set(true);
-				   extended = true;
-			   }
-			   else { //right side
-			   	   driveStraightForward();
-				   driveStraightForward();
-				   driveStraightForward();
-			   }*/
 		}
-		/*
-		double masterPower = 0.1;
-		double slavePower = 0.1;
-		int error = 0;
-		int kp = 25;
-	
-		leftMotor1.set(ControlMode.PercentOutput, -masterPower);
-		leftMotor2.set(ControlMode.PercentOutput, -masterPower);
-		rightMotor1.set(ControlMode.PercentOutput, slavePower);
-		rightMotor2.set(ControlMode.PercentOutput, slavePower);
-		leftEncoder.reset();
-		rightEncoder.reset();
-		error = -leftCount + rightCount;
-		slavePower  = slavePower + (error/kp);
-		Timer.delay(0.1);
-		System.out.println("error:" + error + "slavePower" + slavePower);
-		*/
-		
-		
-			/*
-	
-			if (rightCount < (144513.262))
-			{
-				System.out.println(leftCount);
-			}
-			else {
-				leftMotor1.set(ControlMode.PercentOutput, 0);
-				leftMotor2.set(ControlMode.PercentOutput, 0);
-				rightMotor1.set(ControlMode.PercentOutput, 0);
-				rightMotor2.set(ControlMode.PercentOutput, 0);
-			}
-		*/
 
 		
 	}
 		
 	@Override
-	public void teleopInit() {
+	public void teleopInit() { //
 		leftEncoder.reset();
 		rightEncoder.reset();
 	}
@@ -299,12 +205,10 @@ public class Robot extends IterativeRobot {
 		
 		if (rightJoy.getRawButton(2)) {
 			if (lowgear == true) {
-				Solenoid2.set(true);
 				Solenoid1.set(true);
 				lowgear = false;
 				Timer.delay(.001);
 			} else {
-				Solenoid2.set(false);
 				Solenoid1.set(false);
 				lowgear = true;
 				Timer.delay(.001);
@@ -345,36 +249,6 @@ public class Robot extends IterativeRobot {
 	/**
 	 * This function is called periodically during test mode.
 	 */
-	public void moveOnYAxis(int speed) { //0 - 255 and moves full robot forwards or backwards
-		leftMotor1.set(ControlMode.PercentOutput, -1*speed);
-		leftMotor2.set(ControlMode.PercentOutput, -1*speed);
-		rightMotor1.set(ControlMode.PercentOutput, speed);
-		rightMotor2.set(ControlMode.PercentOutput, speed);
-	}
-	public void turn90(int degree) {//90 or -90 nothing else works, and turns in a perfect right angle
-		if (degree == 90) {
-			leftMotor1.set(ControlMode.PercentOutput, 25);
-			leftMotor2.set(ControlMode.PercentOutput, 25);
-			rightMotor1.set(ControlMode.PercentOutput, 25);
-			rightMotor2.set(ControlMode.PercentOutput, 25);
-		} else if(degree == -90) {
-			leftMotor1.set(ControlMode.PercentOutput, -25);
-			leftMotor2.set(ControlMode.PercentOutput, -25);
-			rightMotor1.set(ControlMode.PercentOutput, 25);
-			rightMotor2.set(ControlMode.PercentOutput, 25);
-		}
-		/*if (degree2 == 45) {
-			leftMotor1.set(ControlMode.PercentOutput, 4);
-			leftMotor2.set(ControlMode.PercentOutput, 4);
-			rightMotor1.set(ControlMode.PercentOutput, -4);
-			rightMotor2.set(ControlMode.PercentOutput, -4);
-		} else if(degree2 == -45) {
-			leftMotor1.set(ControlMode.PercentOutput, -4);
-			leftMotor2.set(ControlMode.PercentOutput, -4);
-			rightMotor1.set(ControlMode.PercentOutput, 4);
-			rightMotor2.set(ControlMode.PercentOutput, 4);
-		}*/
-	}
 	@Override
 	public void testPeriodic() {
 		/*leftMotor1.set(ControlMode.PercentOutput, .5);
