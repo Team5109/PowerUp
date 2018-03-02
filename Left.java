@@ -1,6 +1,5 @@
 package org.usfirst.frc.team5109.robot;
 
-
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.logging.Level;
@@ -58,27 +57,6 @@ public class Robot extends IterativeRobot {
 	long idealright = 0;
 	long idealleft = 0;
 	int Counter = 0;
-	/*boolean spinningBags = false;
-	boolean spinningBags1 = false;*/
-	
-	/*double length = testEncoder.getDistance();
-	//double period = testEncoder.getPeriod();
-	
-	boolean direction = testEncoder.getDirection();
-	boolean stopped = testEncoder.getStopped();
-	//For the encoder do not move 
-	int count = 0;
-	int i = 0;
-	boolean testing = true;
-	*/
-
-
-	//NetworkTable imutable = NetworkTable.getTable("IMU Table");
-
- 
-
-	
-
 
 	
 	/**
@@ -87,35 +65,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-	    compressor = new Compressor(0);
+	    	compressor = new Compressor(0);
 		CameraServer.getInstance().startAutomaticCapture();
 		leftEncoder.setDistancePerPulse(1);
 		rightEncoder.setDistancePerPulse(1);
-		/*.0184
-		/*NetworkTableInstance table = NetworkTableInstance.getDefault();
-		NetworkTableInstance instance = NetworkTableInstance.getDefault();
-		NetworkTable rootTable = instance.getTable("");
-		System.out.println(rootTable);
-		double[] defaultValue = new double[0];
-		while(true) {
-			double[] areas = table.getNumberArray("area",defaultValue);
-			for(double area : areas) {
-				System.out.println(area + " ");
-			}
-			System.out.println();
-			Timer.delay(1);
-		} */
-		//NetworkTable imutable = NetworkTable.getSubTable("IMU Table");
-		//System.out.println(imutable.getEntry("roll"));
-	    //System.out.println(imutable.getEntry("pitch"));
-	    //System.out.println(imutable.getEntry("yaw"));
-		//exampleSolenoid.set(true);
-		//exampleSolenoid.set(false);
-		//c.setClosedLoopControl(true);
-		//c.setClosedLoopControl(false);
-		
-		
-
 	}
 
 	/**
@@ -123,17 +76,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-	  String gameData;
+	  	String gameData;
 		leftEncoder.reset();
 		rightEncoder.reset();
 		idealright = rightEncoder.get();
 		idealleft = leftEncoder.get();
 		Counter = 0;
-
-		
-		
-		
-
 	}
 	/**
 	 * This function is called periodically during autonomous.
@@ -142,29 +90,25 @@ public class Robot extends IterativeRobot {
 		long leftCount = leftEncoder.get();
 		long rightCount = rightEncoder.get();
 		String gameData = DriverStation.getInstance().getGameSpecificMessage ();
-		if(gameData.length() > 0)
-	    {
-	    if(gameData.charAt(0) == 'R')
-			  {
-	    	if (Counter == 0) {
-	    		driveStraight();
-	    	}    	
-	
-	    else if(Counter == 1) {
-	    		leftTurn();
+		if(gameData.length() > 0) {
+	    		if(gameData.charAt(0) == 'R') {
+	    			if (Counter == 0) {
+	    			driveStraight();
+	    			}    	
+	    		else if(Counter == 1) {
+	    			leftTurn();
 				}
-	    	
 			  }
-	System.out.println("left: " + leftCount);
-        System.out.println("right: " + rightCount);
-        System.out.println("leftspeed: " + leftspeed);
-        System.out.println("rightspeed: " + rightspeed);
-        else {
-        if(Counter == 0) {
-			driveStraight();        
-        }
-        }
-	}
+		System.out.println("left: " + leftCount);
+        	System.out.println("right: " + rightCount);
+        	System.out.println("leftspeed: " + leftspeed);
+        	System.out.println("rightspeed: " + rightspeed);
+        		else {
+        			if(Counter == 0) {
+					driveStraight();        
+        			}
+        		      }
+		}
        }
         
 	
@@ -291,20 +235,19 @@ public class Robot extends IterativeRobot {
 			leftMotor2.set(ControlMode.PercentOutput, -0.2);
 			rightMotor1.set(ControlMode.PercentOutput, 0.2);
 			rightMotor2.set(ControlMode.PercentOutput, 0.2);
-		Timer.delay(.75);
-		leftMotor1.set(ControlMode.PercentOutput, 0);
-		leftMotor2.set(ControlMode.PercentOutput, 0);
-		rightMotor1.set(ControlMode.PercentOutput, 0);
-		rightMotor2.set(ControlMode.PercentOutput, 0);
-Solenoid3.set(true);
-Timer.delay(1);
-Solenoid0.set(true);
+			Timer.delay(.75);
+			leftMotor1.set(ControlMode.PercentOutput, 0);
+			leftMotor2.set(ControlMode.PercentOutput, 0);
+			rightMotor1.set(ControlMode.PercentOutput, 0);
+			rightMotor2.set(ControlMode.PercentOutput, 0);
+			Solenoid3.set(true);
+			Timer.delay(1);
+			Solenoid0.set(true);
 			Counter = 2;
 		}
-
 	}
+	
 	public void driveStraight() {
-
 		double Acceleration = 0.01;
 		long leftCount = leftEncoder.get();
 		long rightCount = rightEncoder.get();
@@ -353,57 +296,11 @@ Solenoid0.set(true);
 			}
 		
 		  }
-    
-	public void moveOnYAxis(int speed) { //0 - 255 and moves full robot forwards or backwards
-		leftMotor1.set(ControlMode.PercentOutput, -1*speed);
-		leftMotor2.set(ControlMode.PercentOutput, -1*speed);
-		rightMotor1.set(ControlMode.PercentOutput, speed);
-		rightMotor2.set(ControlMode.PercentOutput, speed);
-	}
-	public void turn90(int degree) {//90 or -90 nothing else works, and turns in a perfect right angle
-		if (degree == 90) {
-			leftMotor1.set(ControlMode.PercentOutput, 25);
-			leftMotor2.set(ControlMode.PercentOutput, 25);
-			rightMotor1.set(ControlMode.PercentOutput, 25);
-			rightMotor2.set(ControlMode.PercentOutput, 25);
-		} else if(degree == -90) {
-			leftMotor1.set(ControlMode.PercentOutput, -25);
-			leftMotor2.set(ControlMode.PercentOutput, -25);
-			rightMotor1.set(ControlMode.PercentOutput, 25);
-			rightMotor2.set(ControlMode.PercentOutput, 25);
-		}
-		/*if (degree2 == 45) {
-			leftMotor1.set(ControlMode.PercentOutput, 4);
-			leftMotor2.set(ControlMode.PercentOutput, 4);
-			rightMotor1.set(ControlMode.PercentOutput, -4);
-			rightMotor2.set(ControlMode.PercentOutput, -4);
-		} else if(degree2 == -45) {
-			leftMotor1.set(ControlMode.PercentOutput, -4);
-			leftMotor2.set(ControlMode.PercentOutput, -4);
-			rightMotor1.set(ControlMode.PercentOutput, 4);
-			rightMotor2.set(ControlMode.PercentOutput, 4);
-		}*/
-	}
-	
-	
+    	
 	@Override
 	/**
 	 * This function is called periodically during test mode.
 	 */
 	public void testPeriodic() {
-		/*leftMotor1.set(ControlMode.PercentOutput, .5);
-		double encoderDistanceRaw = testEncoder.getRaw();
-		boolean encoderDirection = testEncoder.getDirection();
-		int count = testEncoder.get();
-		//System.out.println(encoderDirection);
-		//System.out.println(encoderDistanceRaw);
-		//System.out.println(count);
-		
-		//inches per pulse = .0736310in/pulse
-		double rate = testEncoder.getRate();
-		//System.out.println(rate * -1);
-		*/
-		
-		
 	}
 }
