@@ -152,19 +152,17 @@ public class Robot extends IterativeRobot {
 	
 	    else if(Counter == 1) {
 	    		leftTurn();
-				}
-	    	
-			  }
-	    System.out.println("left: " + leftCount);
+				}		  
+	System.out.println("left: " + leftCount);
         System.out.println("right: " + rightCount);
         System.out.println("leftspeed: " + leftspeed);
         System.out.println("rightspeed: " + rightspeed);
-		}
         else {
         if(Counter == 0) {
 			driveStraight();        
         }
         }
+	}
        }
         
 	
