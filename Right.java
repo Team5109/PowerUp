@@ -1,6 +1,5 @@
 package org.usfirst.frc.team5109.robot;
 
-
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import java.util.logging.Level;
@@ -45,7 +44,6 @@ public class Robot extends IterativeRobot {
 	boolean clamped = false;
 	Solenoid Solenoid3 = new Solenoid(3);
 	boolean extended = false;
-	
 	Solenoid Solenoid5 = new Solenoid(5);
 	//Solenoids for gear shifting
 	Solenoid Solenoid4 = new Solenoid(4);//1
@@ -58,28 +56,6 @@ public class Robot extends IterativeRobot {
 	long idealright = 0;
 	long idealleft = 0;
 	int Counter = 0;
-	/*boolean spinningBags = false;
-	boolean spinningBags1 = false;*/
-	
-	/*double length = testEncoder.getDistance();
-	//double period = testEncoder.getPeriod();
-	
-	boolean direction = testEncoder.getDirection();
-	boolean stopped = testEncoder.getStopped();
-	//For the encoder do not move 
-	int count = 0;
-	int i = 0;
-	boolean testing = true;
-	*/
-
-
-	//NetworkTable imutable = NetworkTable.getTable("IMU Table");
-
- 
-
-	
-
-
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -87,35 +63,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-	    compressor = new Compressor(0);
+	    	compressor = new Compressor(0);
 		CameraServer.getInstance().startAutomaticCapture();
 		leftEncoder.setDistancePerPulse(1);
 		rightEncoder.setDistancePerPulse(1);
-		/*.0184
-		/*NetworkTableInstance table = NetworkTableInstance.getDefault();
-		NetworkTableInstance instance = NetworkTableInstance.getDefault();
-		NetworkTable rootTable = instance.getTable("");
-		System.out.println(rootTable);
-		double[] defaultValue = new double[0];
-		while(true) {
-			double[] areas = table.getNumberArray("area",defaultValue);
-			for(double area : areas) {
-				System.out.println(area + " ");
-			}
-			System.out.println();
-			Timer.delay(1);
-		} */
-		//NetworkTable imutable = NetworkTable.getSubTable("IMU Table");
-		//System.out.println(imutable.getEntry("roll"));
-	    //System.out.println(imutable.getEntry("pitch"));
-	    //System.out.println(imutable.getEntry("yaw"));
-		//exampleSolenoid.set(true);
-		//exampleSolenoid.set(false);
-		//c.setClosedLoopControl(true);
-		//c.setClosedLoopControl(false);
-		
-		
-
 	}
 
 	/**
@@ -123,17 +74,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-	  String gameData;
+	  	String gameData;
 		leftEncoder.reset();
 		rightEncoder.reset();
 		idealright = rightEncoder.get();
 		idealleft = leftEncoder.get();
 		Counter = 0;
-
-		
-		
-		
-
 	}
 	/**
 	 * This function is called periodically during autonomous.
@@ -142,15 +88,12 @@ public class Robot extends IterativeRobot {
 		long leftCount = leftEncoder.get();
 		long rightCount = rightEncoder.get();
 		String gameData = DriverStation.getInstance().getGameSpecificMessage ();
-		if(gameData.length() > 0)
-	    {
-	    if(gameData.charAt(0) == 'R')
-			  {
-	    	if (Counter == 0) {
-	    		driveStraight();
-	    	}    	
-	
-	    else if(Counter == 1) {
+		if(gameData.length() > 0) {
+	    		if(gameData.charAt(0) == 'R') {
+	    			if (Counter == 0) {
+	    				driveStraight();
+	    			}    	
+	    		else if(Counter == 1) {
 	    		leftTurn();
 				}		  
 	System.out.println("left: " + leftCount);
