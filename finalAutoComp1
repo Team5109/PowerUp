@@ -347,11 +347,6 @@ public class Robot extends IterativeRobot {
 				extended = true;
 				Timer.delay(.28);
 			}
-			else {
-				Solenoid3.set(false);
-				extended = false;
-				Timer.delay(.28);
-			}
 		}
 		
 		
