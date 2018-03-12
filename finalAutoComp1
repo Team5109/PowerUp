@@ -333,12 +333,7 @@ public class Robot extends IterativeRobot {
 			if(clamped == false) {
 				Solenoid0.set(true);
 				clamped = true;
-				Timer.delay(.28);
-			}
-			else {
-				Solenoid0.set(false);
-				clamped = false;
-				Timer.delay(.28);
+				Timer.delay(.08);
 			}
 		} 
 		if (leftJoy.getRawButton(1)) {
