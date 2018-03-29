@@ -35,9 +35,10 @@ imu.setCompassEnable(True)
 poll_interval = imu.IMUGetPollInterval()
 print("Recommended Poll Interval: %dmS\n" % poll_interval)
 
-ip = "10.51.9.2"
+ip = "10.51.9.27"
+# for the actual bot the ip is 10.51.9.2
 
-#NetworkTables.initialize(server = ip)
+NetworkTables.initialize(server = ip)
 
 imutable = NetworkTables.getTable("IMU Table")
 
@@ -45,7 +46,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 # uncomment below to make the network tables work
-'''
+
 while True:
   if imu.IMURead():
     # x, y, z = imu.getFusionData()
@@ -58,7 +59,7 @@ while True:
     imutable.putNumber("pitch", (math.degrees(fusionPose[1])))
     imutable.putNumber("yaw", (math.degrees(fusionPose[2])))
     time.sleep(poll_interval*1.0/1000.0)
-'''
+
 #imutable.putNumber("testVariable2", 101011)
 #print(imutable.getNumber("testVariable2", "didn't work"))
 #imutable.delete("testVariable2")
