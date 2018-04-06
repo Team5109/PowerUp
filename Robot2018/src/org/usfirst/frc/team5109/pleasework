@@ -558,7 +558,7 @@ public void imuLeftTurn() {
 		}
 		else {}
 		i++;
-		if(imuYaw < imuYawIdeal -3 && imuYaw > imuYawIdeal + 3) {
+		if(imuYaw <= imuYawIdeal + 1 && imuYaw >= imuYawIdeal - 1) {
 			leftMotor1.set(ControlMode.PercentOutput, 0);
 			leftMotor2.set(ControlMode.PercentOutput, 0);
 			rightMotor1.set(ControlMode.PercentOutput, 0);
@@ -586,7 +586,7 @@ public void imuLeftTurn() {
 		}
 		else {}
 		i++;
-		if(imuYaw < imuYawIdeal -3 && imuYaw > imuYawIdeal + 3) {
+		if(imuYaw <= imuYawIdeal + 1 && imuYaw >= imuYawIdeal - 1) {
 			leftMotor1.set(ControlMode.PercentOutput, 0);
 			leftMotor2.set(ControlMode.PercentOutput, 0);
 			rightMotor1.set(ControlMode.PercentOutput, 0);
@@ -853,12 +853,9 @@ public void imuLeftTurn() {
 		imuYaw = imuTable.getEntry("yaw").getDouble(0);
 		if(i == 0) {
 			imuYawInitial = imuYaw;
-			leftspeed = -.075;
-			rightspeed = -.075;
 		}
 		else {}
 		i++;
-		double Acceleration = -0.001;
 		double leftCount = leftEncoder.get();
 		double rightCount = rightEncoder.get();
 		System.out.println("Initial: " + imuYawInitial);
@@ -866,24 +863,26 @@ public void imuLeftTurn() {
 		System.out.println("Right: " + rightCount);
 		System.out.println("Left: " + leftCount);
 			if(leftCount <= length && rightCount < length) {	
-				if (imuYaw == imuYawInitial) {     //Make this change testing thing a method because we use it several times
+				if (imuYaw >= imuYawInitial - 1 && imuYaw <= imuYawInitial + 1) { 
+					leftspeed = .2;
+					rightspeed = .2;		//Make this change testing thing a method because we use it several times
 				}
 				else if (imuYaw >= imuYawInitial + 1) {
-					rightspeed = rightspeed + Acceleration;
-					leftspeed = leftspeed - Acceleration;
+					leftspeed = .15;
+					
 				}
 				else if (imuYaw <= imuYawInitial - 1) {
-					leftspeed = leftspeed + Acceleration;
-					rightspeed = rightspeed - Acceleration;
+					rightspeed = .15;
 				}
-				if (leftspeed <= -0.2) {
-					leftspeed = -0.2;
+				if (leftspeed >= 0.2) {
+					leftspeed = 0.2;
 				}
-				if (rightspeed <= -0.2) {
-					rightspeed = -0.2;
+				if (rightspeed >= 0.2) {
+					rightspeed = 0.2;
 				}
 				leftMotor1.set(ControlMode.PercentOutput, -leftspeed);
 				leftMotor2.set(ControlMode.PercentOutput, -leftspeed);
+			
 				rightMotor1.set(ControlMode.PercentOutput, rightspeed);
 				rightMotor2.set(ControlMode.PercentOutput, rightspeed);
 				 
@@ -891,9 +890,12 @@ public void imuLeftTurn() {
 			else {
 				leftMotor1.set(ControlMode.PercentOutput, 0);
 				leftMotor2.set(ControlMode.PercentOutput, 0);
+				
 				rightMotor1.set(ControlMode.PercentOutput, 0);
 				rightMotor2.set(ControlMode.PercentOutput, 0);
+				
 				Counter ++;
+				
 				leftEncoder.reset();
 				rightEncoder.reset();
 				i = 0;
@@ -1047,6 +1049,8 @@ public void imuLeftTurn() {
 		System.out.println(imuTable.getKeys());
 		Counter = 0;
 		i = 0;
+		leftEncoder.reset();
+		rightEncoder.reset();
 	}
 	/**
 	 * This function is called periodically during test mode.
@@ -1087,10 +1091,10 @@ public void imuLeftTurn() {
 		}
 	*/	
 		
-		//if(Counter == 0) {
-		//	imuDriveStraight(15000);
-		//}
-		leftMotor2.set(ControlMode.PercentOutput, .2);
+		if(Counter == 0) {
+			//imuDriveStraight(15000);
+			imuDriveStraight(12000);
+		}
 	}
 	
 }
