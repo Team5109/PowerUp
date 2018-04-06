@@ -26,10 +26,10 @@ import edu.wpi.first.wpilibj.DriverStation;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	TalonSRX leftMotor1 =  new TalonSRX(6);
-	TalonSRX leftMotor2 =  new TalonSRX(10);
-	TalonSRX rightMotor1 =  new TalonSRX(5);//10
-	TalonSRX rightMotor2 =  new TalonSRX(4);//10
+	TalonSRX leftMotor1 =  new TalonSRX(7);
+	TalonSRX leftMotor2 =  new TalonSRX(11);
+	TalonSRX rightMotor1 =  new TalonSRX(9);//10
+	TalonSRX rightMotor2 =  new TalonSRX(3);//10
 	TalonSRX rightElevatorMotor = new TalonSRX(2);
 	TalonSRX leftElevatorMotor = new TalonSRX(1);
 	TalonSRX intakeBags = new TalonSRX(8);
@@ -130,8 +130,11 @@ public class Robot extends IterativeRobot {
 		idealright = rightEncoder.get();
 		idealleft = leftEncoder.get();
 		Counter = 0;
-		//i = 0;
-		
+		i = 0;
+		leftspeed = -.1; //positive for real robit
+		rightspeed = -.1;
+		imuTable = inst.getTable("IMU Table");
+		System.out.println(imuTable.getKeys());
 		
 		
 
@@ -140,7 +143,7 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during autonomous.
 	 */
 	public void autonomousPeriodic() {
-		int startpos = 2;// 1 is right side, 2 is right middle, 3 is left middle, 4 is left side DONT RUN POS 3 IT WILL NOT WORK
+		int startpos = 69;// 1 is right side, 2 is right middle, 3 is left middle, 4 is left side DONT RUN POS 3 IT WILL NOT WORK
 		long leftCount = leftEncoder.get();
 		long rightCount = rightEncoder.get();
 		String gameData = DriverStation.getInstance().getGameSpecificMessage ();
@@ -153,7 +156,7 @@ public class Robot extends IterativeRobot {
 				if(gameData.charAt(0) == 'R') {
 					if (Counter == 0) {		
 						driveStraight(16000);
-							
+						System.out.println("stage one is working");
 					}
 					else if(Counter == 1) {
 						turnCorrectionRight();
@@ -181,6 +184,7 @@ public class Robot extends IterativeRobot {
 				else {
 					if(Counter == 0) {
 						driveStraight(3256);
+						System.out.println("stage one left side working");
 					}
 				}
 			}
@@ -224,7 +228,7 @@ public class Robot extends IterativeRobot {
 				}
 				else {
 					if(Counter == 0) {
-					middleStraight();
+						middleStraight();
 					}
 				}	
 			}
@@ -260,14 +264,17 @@ public class Robot extends IterativeRobot {
 					}
 				}	
 			}
-	    }
+	    
 		else if(startpos == 69) {
+			System.out.println("69 XDDDDD");
 			if(gameData.charAt(0) == 'L') {
 				if(Counter == 0) {
-	    			imuDriveStraight(19000);        
+	    			imuDriveStraight(19000);
+	    			System.out.println("case 69 is running");
 					}
 				else if (Counter == 1) {
 					imuRightTurn();
+					System.out.println("case 69 part 2 is running");
 				}
 				else if (Counter == 2) {
 					imuDriveStraight(1000);
@@ -302,7 +309,9 @@ public class Robot extends IterativeRobot {
 				else if(Counter == 5) {
 					eject();
 				}
-				else {}
+				else {
+					
+				}
 			}
 			else {
 				if(Counter == 0) {
@@ -335,8 +344,7 @@ public class Robot extends IterativeRobot {
 			}
 		}
 	}
-	
-       
+}      
         
 	
 	
@@ -794,13 +802,13 @@ public void imuLeftTurn() {
 		  }	
 	public void driveStraight(int length) {
 
-		double Acceleration = 0.01;
+		double Acceleration = -0.01;
 		long leftCount = leftEncoder.get();
 		long rightCount = rightEncoder.get();
-		/*long leftChange = leftCount - idealleft;
+		long leftChange = leftCount - idealleft;
 		long rightChange = rightCount - idealright;
 		idealleft = leftEncoder.get();
-		idealright = rightEncoder.get();*/
+		idealright = rightEncoder.get();
 		double difference = leftCount - rightCount;
 			if(leftCount <= length && rightCount <= length) {	
 				if (difference < 0) {
@@ -836,17 +844,18 @@ public void imuLeftTurn() {
 		  }
 	
 	public void imuDriveStraight(int length) {
-		
-		imuYaw = (imuTable.getEntry("yaw").getDouble(0));
+		imuYaw = imuTable.getEntry("yaw").getDouble(0);
 		if(i == 0) {
 			imuYawInitial = imuYaw;
-			leftspeed = .1;
-			rightspeed = .1;
+			leftspeed = -.1;
+			rightspeed = -.1;
 		}
 		else {}
 		i++;
+		System.out.println(imuYawInitial);
+		System.out.println(imuYaw);
 		
-		double Acceleration = 0.01;
+		double Acceleration = -0.01;
 		double leftCount = leftEncoder.get();
 		double rightCount = rightEncoder.get();
 			if(leftCount <= length && rightCount < length) {	
@@ -858,11 +867,11 @@ public void imuLeftTurn() {
 				else if (imuYaw <= imuYawInitial - 2.5) {
 					leftspeed = leftspeed + Acceleration;
 				}
-				if (leftspeed >= 0.5) {
-					leftspeed = 0.5;
+				if (leftspeed <= -0.2) {
+					leftspeed = -0.2;
 				}
-				if (rightspeed >= 0.5) {
-					rightspeed = 0.5;
+				if (rightspeed <= -0.2) {
+					rightspeed = -0.2;
 				}
 				leftMotor1.set(ControlMode.PercentOutput, -leftspeed);
 				leftMotor2.set(ControlMode.PercentOutput, -leftspeed);
@@ -875,7 +884,6 @@ public void imuLeftTurn() {
 				leftMotor2.set(ControlMode.PercentOutput, 0);
 				rightMotor1.set(ControlMode.PercentOutput, 0);
 				rightMotor2.set(ControlMode.PercentOutput, 0);
-				Timer.delay(.66);
 				Counter ++;
 				leftEncoder.reset();
 				rightEncoder.reset();
