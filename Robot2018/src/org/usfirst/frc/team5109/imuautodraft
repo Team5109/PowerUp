@@ -488,7 +488,7 @@ public void imuRightTurn() {
 		}
 		else {}
 		i++;
-		if(imuYaw < imuYawIdeal -1 && imuYaw > imuYawIdeal + 1) {
+		if(imuYaw < imuYawIdeal -3 && imuYaw > imuYawIdeal + 3) {
 			leftMotor1.set(ControlMode.PercentOutput, 0);
 			leftMotor2.set(ControlMode.PercentOutput, 0);
 			rightMotor1.set(ControlMode.PercentOutput, 0);
@@ -517,7 +517,7 @@ public void imuLeftTurn() {
 	}
 	else {}
 	i++;
-	if(imuYaw < imuYawIdeal -1 && imuYaw > imuYawIdeal + 1) {
+	if(imuYaw < imuYawIdeal -3 && imuYaw > imuYawIdeal + 3) {
 		leftMotor1.set(ControlMode.PercentOutput, 0);
 		leftMotor2.set(ControlMode.PercentOutput, 0);
 		rightMotor1.set(ControlMode.PercentOutput, 0);
@@ -545,7 +545,7 @@ public void imuLeftTurn() {
 		}
 		else {}
 		i++;
-		if(imuYaw < imuYawIdeal -1 && imuYaw > imuYawIdeal + 1) {
+		if(imuYaw < imuYawIdeal -3 && imuYaw > imuYawIdeal + 3) {
 			leftMotor1.set(ControlMode.PercentOutput, 0);
 			leftMotor2.set(ControlMode.PercentOutput, 0);
 			rightMotor1.set(ControlMode.PercentOutput, 0);
@@ -573,7 +573,7 @@ public void imuLeftTurn() {
 		}
 		else {}
 		i++;
-		if(imuYaw < imuYawIdeal -1 && imuYaw > imuYawIdeal + 1) {
+		if(imuYaw < imuYawIdeal -3 && imuYaw > imuYawIdeal + 3) {
 			leftMotor1.set(ControlMode.PercentOutput, 0);
 			leftMotor2.set(ControlMode.PercentOutput, 0);
 			rightMotor1.set(ControlMode.PercentOutput, 0);
@@ -840,6 +840,8 @@ public void imuLeftTurn() {
 		imuYaw = (imuTable.getEntry("yaw").getDouble(0));
 		if(i == 0) {
 			imuYawInitial = imuYaw;
+			leftspeed = .1;
+			rightspeed = .1;
 		}
 		else {}
 		i++;
@@ -851,7 +853,7 @@ public void imuLeftTurn() {
 				if (imuYaw == imuYawInitial) {     //Make this change testing thing a method because we use it several times
 				}
 				else if (imuYaw >= imuYawInitial + 2.5) {
-					leftspeed = leftspeed - Acceleration;
+					rightspeed = rightspeed + Acceleration;
 				}
 				else if (imuYaw <= imuYawInitial - 2.5) {
 					leftspeed = leftspeed + Acceleration;
