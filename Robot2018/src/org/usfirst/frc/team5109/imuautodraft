@@ -496,7 +496,7 @@ public void imuRightTurn() {
 		}
 		else {}
 		i++;
-		if(imuYaw < imuYawIdeal -3 && imuYaw > imuYawIdeal + 3) {
+		if(imuYaw > imuYawIdeal -3 && imuYaw < imuYawIdeal + 3) {
 			leftMotor1.set(ControlMode.PercentOutput, 0);
 			leftMotor2.set(ControlMode.PercentOutput, 0);
 			rightMotor1.set(ControlMode.PercentOutput, 0);
@@ -525,7 +525,10 @@ public void imuLeftTurn() {
 	}
 	else {}
 	i++;
-	if(imuYaw < imuYawIdeal -3 && imuYaw > imuYawIdeal + 3) {
+	System.out.println("Initial: " + imuYawInitial);
+	System.out.println("Ideal: " + imuYawIdeal);
+	System.out.println("Current: " + imuYaw);
+	if(imuYaw <= imuYawIdeal + 10 && imuYaw >= imuYawIdeal - 10) {
 		leftMotor1.set(ControlMode.PercentOutput, 0);
 		leftMotor2.set(ControlMode.PercentOutput, 0);
 		rightMotor1.set(ControlMode.PercentOutput, 0);
@@ -1034,9 +1037,10 @@ public void imuLeftTurn() {
 	@Override
 	public void testInit() {
 		
-		//imuTable = inst.getTable("IMU Table");
-		//System.out.println(imuTable.getKeys());
-		
+		imuTable = inst.getTable("IMU Table");
+		System.out.println(imuTable.getKeys());
+		Counter = 0;
+		i = 0;
 	}
 	/**
 	 * This function is called periodically during test mode.
@@ -1076,6 +1080,10 @@ public void imuLeftTurn() {
 			rightMotor2.set(ControlMode.PercentOutput, 0);
 		}
 	*/	
+		
+		if(Counter == 0) {
+			imuLeftTurn();
+		}
 	}
 	
 }
