@@ -1,6 +1,6 @@
 package org.usfirst.frc.team5109.robot;
 
-#This code has the last version of the auto when it worked well at Gainesville. May need to be tweaked for the future.
+//This code has the last version of the auto when it worked well at Gainesville. May need to be tweaked for the future.
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
