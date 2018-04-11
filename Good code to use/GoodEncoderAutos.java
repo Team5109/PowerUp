@@ -329,14 +329,15 @@ public class Robot extends IterativeRobot {
 				Timer.delay(.08);
 			}
 		}
-		if (rightJoy.getRawButton(1)) {
-			
-			if(clamped == false) {
-				Solenoid0.set(true);
-				clamped = true;
-				Timer.delay(.08);
-			}
-		} 
+		if (rightJoy.getRawButton(1) == true) {
+			Solenoid0.set(true);
+				
+			Timer.delay(.08);
+		} else {
+			Solenoid0.set(false);	
+			Timer.delay(.08);
+		}
+		
 		if (leftJoy.getRawButton(1)) {
 			if(extended == false) {
 				Solenoid3.set(true);
