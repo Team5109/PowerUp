@@ -1,6 +1,6 @@
 package org.usfirst.frc.team5109.robot;
 
-#The important stuff is the imu stuff, most other stuff probably doesn't work
+//The important stuff is the imu stuff, most other stuff probably doesn't work
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
