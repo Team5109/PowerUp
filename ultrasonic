@@ -1,0 +1,26 @@
+import time
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(23, GPIO.OUT)
+GPIO.setup(24, GPIO.IN)
+
+def distance():
+    GPIO.output(23, True)
+    time.sleep(.00001)
+    GPIO.output(23, False)
+    while GPIO.input(24) == 0:
+            pulse_start = time.time()
+    while GPIO.input(24) == 1:
+            pulse_end= time.time()
+    pulse_duration = pulse_end - pulse_start
+    distance = pulse_duration * 17150
+    distance = round(distance,2)
+    return distance
+
+while True:
+    print(distance())
+  
+
+    
+
