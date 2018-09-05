@@ -98,7 +98,6 @@ public void driveStraight(double distance) {   //distance should be in feet
 	long rightChange = rightCount - idealright;
 	idealleft = leftEncoder.get();
 	idealright = rightEncoder.get();
-	leftElevatorMotor.set(ControlMode.PercentOutput, operator.getY());
 		if(leftCount <= encoder_counts && rightCount < encoder_counts) {	
 			if (leftChange == 40) {
 			}
