@@ -1,0 +1,108 @@
+To install RTIMULib2 and use the demo software!
+
+
+download everything from github zipped up
+https://github.com/RTIMULib/RTIMULib2/ 
+unzip and open up the stuff
+
+make sure the pi is connected to GPIO properly and try this: 
+	CODE: 
+	sudo i2cdetect -y 1
+
+If that doesn't work, complete the following steps below. This is from a forum
+i copied and adapted it from here (http://www.runeaudio.com/forum/how-to-enable-i2c-t1287.html)
+Folder names might be slightly different. If a command doesn't work, use
+'sudo' in front of the command to just make it work. especially when using 
+nano to edit config and system files. also, use Ctrl+O in nano
+to save, then hit Enter to confirm. Then do Ctrl+X to exit the editor. 
+
+____________________________________
+1) Open /boot/config.txt with:
+
+	CODE:
+	sudo nano /boot/config.txt
+
+
+	Find this:
+
+	CODE:
+	#device_tree_param=i2c_arm=on
+
+
+	And uncomment it (remove the # in front of this line).
+
+2) Open /boot/cmdline.txt with:
+
+	CODE: 
+	nano /boot/cmdline.txt
+
+
+	And at the end of the file add this:
+
+	CODE: 
+	bcm2708.vc_i2c_override=1
+
+
+3) Open /etc/modules-load.d/raspberrypi.conf with:
+
+	CODE: 
+	nano /etc/modules-load.d/raspberrypi.conf
+
+
+	And add this at the end:
+
+	CODE:
+	i2c-bcm2708
+	i2c-dev
+
+
+4) Install i2c-tools with:
+
+	CODE:
+	sudo apt-get install i2c-tools
+
+
+	Turn off your Pi, connect your I2C device (for example LCD display), turn on your Pi2 and run this:
+
+	CODE: 
+	i2cdetect -y 1
+
+
+	You should get something like:
+
+	CODE: 
+	[root@runeaudio ~]# i2cdetect -y 1
+	     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+	00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+	10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+	20: -- -- -- -- -- -- -- 27 -- -- -- -- -- -- -- --
+	30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+	40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+	50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+	60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+	70: -- -- -- -- -- -- -- --
+
+
+	You can see my LCD at address 27.
+__________________________________________
+
+I'm not sure what the table actually means but probably progress. 
+Mine atm has something in 
+	10: and e: 1e
+	60: and b: 6b
+
+Ok, next is build/make the program demos. First, install Qt, which does
+GUI based programs or something. 
+	CODE:
+	sudo apt-get install libqt4-dev
+
+Next, navigate (cd) to the RTIMULibDemoGL folder
+(/home/pi/RTIMULib2-master/Linux/RTIMULibDemoGL) and the do these things
+	CODE:
+	qmake
+	make -j4
+	sudo make install
+This could take a while or put the pi at 100% processing power. it is worth
+it in the end though. after that, you should be able to run the program from anywhere.
+Just type in RTIMULibDemoGL and it should run. 
+ez pz
