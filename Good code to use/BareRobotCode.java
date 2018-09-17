@@ -34,8 +34,8 @@ public class Robot extends IterativeRobot {
 	TalonSRX scalar = new TalonSRX(0);
 	Compressor compressor;
 	boolean lowgear = false;
-	Encoder rightEncoder = new Encoder(0, 1, true); 
-	Encoder leftEncoder = new Encoder(8, 9, false); 
+	Encoder leftEncoder = new Encoder(0, 1, true); 
+	Encoder rightEncoder = new Encoder(8, 9, false); 
 
 	
 
