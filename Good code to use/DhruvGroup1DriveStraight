@@ -36,7 +36,7 @@ public class Robot extends IterativeRobot {
 	boolean lowgear = false;
 	Encoder rightEncoder = new Encoder(0, 1, true); 
 	Encoder leftEncoder = new Encoder(8, 9, false); 
-	double leftSpeed = .25;
+	double leftSpeed = .29;
 	double rightSpeed = .29;
 	
 
@@ -84,38 +84,42 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public void driveStraight(double driveDistance) {
-		double encodercounts = 1564.556753*driveDistance;
+		double encoderCounts = (1564.556753 * 5);
 		double rightencoder = rightEncoder.get();
 		double leftencoder = leftEncoder.get();
 		double encoderDifferenceL = leftencoder - rightencoder;
 		double encoderDifferenceR = rightencoder - leftencoder; 
-		if (leftencoder == encodercounts && rightencoder == encodercounts) {
-			leftMotor1.set (ControlMode.PercentOutput, 0);
-			leftMotor1.set (ControlMode.PercentOutput, 0);
-			rightMotor1.set (ControlMode.PercentOutput, 0);
-			rightMotor1.set (ControlMode.PercentOutput, 0);
-		}
-		else {
-			if (encoderDifferenceL > 50) {
-				rightSpeed += .18;
-				
+		double acceleration = .08;
+
+		if(rightencoder <= encoderCounts) {
+			if (encoderDifferenceL > 30) {
+				leftMotor1.set (ControlMode.PercentOutput, -(leftSpeed - acceleration));
+				leftMotor1.set (ControlMode.PercentOutput, -(leftSpeed - acceleration));
+				rightMotor1.set (ControlMode.PercentOutput, rightSpeed);
+				rightMotor1.set (ControlMode.PercentOutput, rightSpeed);
 			}
-			if (encoderDifferenceL <=50) {
-				rightSpeed += -0.125;
-			}
-	
-			else if (encoderDifferenceR >= 10) {
-				leftSpeed += .01;
-					
+			else if(encoderDifferenceR > 30) {
+				leftMotor1.set (ControlMode.PercentOutput, -leftSpeed);
+				leftMotor1.set (ControlMode.PercentOutput, -leftSpeed);
+				rightMotor1.set (ControlMode.PercentOutput, rightSpeed - acceleration);
+				rightMotor1.set (ControlMode.PercentOutput, rightSpeed - acceleration);
 			}
 			else {
-			
+				leftMotor1.set (ControlMode.PercentOutput, -leftSpeed);
+				leftMotor1.set (ControlMode.PercentOutput, -leftSpeed);
+				rightMotor1.set (ControlMode.PercentOutput, rightSpeed);
+				rightMotor1.set (ControlMode.PercentOutput, rightSpeed);
 			}
-		leftMotor1.set (ControlMode.PercentOutput, -leftSpeed);
-		leftMotor2.set (ControlMode.PercentOutput, -leftSpeed);
-		rightMotor1.set (ControlMode.PercentOutput, rightSpeed);
-		rightMotor2.set (ControlMode.PercentOutput, rightSpeed);
 		}
+		
+		else {
+			leftMotor1.set (ControlMode.PercentOutput, 0);
+			leftMotor1.set (ControlMode.PercentOutput, 0);
+			rightMotor1.set (ControlMode.PercentOutput, 0);
+			rightMotor1.set (ControlMode.PercentOutput, 0);
+		}
+		
+		
 }
 	
 	}
