@@ -60,6 +60,7 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void robotInit() {
+    	CameraServer.getInstance().startAutomaticCapture();
     	compressor = new Compressor(0);
    	 leftEncoder.setDistancePerPulse(1);
    	 rightEncoder.setDistancePerPulse(1);   	 
