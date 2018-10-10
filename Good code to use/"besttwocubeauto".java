@@ -482,9 +482,10 @@ public void middleAutoR2() {
 	else if (Counter == 5) {
 		rightTurn(40, .35);
 	}
-	else if (Counter == 6) {
+	/*else if (Counter == 6) {
 		eject();
 	}
+	*/
 	else {
 		System.out.println("done");
 	}
